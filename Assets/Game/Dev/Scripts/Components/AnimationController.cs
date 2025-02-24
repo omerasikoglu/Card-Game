@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Template.Components{
+namespace CardGame.Components{
 
   public class AnimationController{
     readonly Animator animator;

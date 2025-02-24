@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Template.Utils.Mechanim{
+namespace CardGame.Utils.Mechanim{
 
   public class AnimationEventReceiver : MonoBehaviour{
     [SerializeField] List<AnimationEvent> animationEventList = new();

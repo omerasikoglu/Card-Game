@@ -1,7 +1,7 @@
 using VContainer;
 using VContainer.Unity;
 
-namespace Template.Systems{
+namespace CardGame.Systems{
 
   public class Scope : LifetimeScope{
     protected override void Configure(IContainerBuilder builder){

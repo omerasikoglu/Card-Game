@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using VContainer;
 
-namespace Template.Systems{
+namespace CardGame.Systems{
 
   public class GameManager : MonoBehaviour{
     [Inject] readonly IObjectResolver resolver;

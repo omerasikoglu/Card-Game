@@ -1,4 +1,4 @@
-namespace Template.Utils{
+namespace CardGame.Utils{
 
   public struct Keys{
     

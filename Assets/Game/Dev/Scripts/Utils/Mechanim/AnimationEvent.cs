@@ -2,7 +2,7 @@
 // using Sirenix.OdinInspector;
 using UnityEngine.Events;
 
-namespace Template.Utils.Mechanim{
+namespace CardGame.Utils.Mechanim{
 
   [Serializable]
   public class AnimationEvent{

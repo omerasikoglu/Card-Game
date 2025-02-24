@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Template.Utils.Mechanim{
+namespace CardGame.Utils.Mechanim{
 
   public class AnimationEventStateBehaviour : StateMachineBehaviour{
 

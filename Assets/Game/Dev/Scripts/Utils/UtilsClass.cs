@@ -5,7 +5,7 @@ using RunTogether.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Template.Utils{
+namespace CardGame.Utils{
 
   [Serializable] public struct MinMax{
     public float Min;
