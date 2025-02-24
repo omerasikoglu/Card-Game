@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PlayerLowerBody
+  m_Mask: 01000000000000000000000001000000010000000000000000000000000000000000000000000000000000000000000000000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: root
+    m_Weight: 0
+  - m_Path: root/Bone
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/arm_l
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/arm_l/arm_l_end
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/arm_r
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/arm_r/arm_r_end
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/Bone.002
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/Bone.002/Bone.002_end
+    m_Weight: 0
+  - m_Path: root/Bone/Bone.001/SK_Tank
+    m_Weight: 0
+  - m_Path: root/Bone/leg_l
+    m_Weight: 1
+  - m_Path: root/Bone/leg_l/leg_l_end
+    m_Weight: 1
+  - m_Path: root/Bone/leg_r
+    m_Weight: 1
+  - m_Path: root/Bone/leg_r/leg_r_end
+    m_Weight: 1
+  - m_Path: SK_Blet
+    m_Weight: 0
+  - m_Path: SK_Body
+    m_Weight: 0
+  - m_Path: SK_Head
+    m_Weight: 0
