@@ -3,13 +3,14 @@ using UnityEngine;
 
 namespace CardGame.World{
 
-  [CreateAssetMenu(menuName = "Scriptables/Card Data", fileName = "Card Data", order = -1)]
-  public class CardData : ScriptableObject{
+  public class o_CardData : ScriptableObject{
 
-    [SerializeField] GameObject prefab;
-    [SerializeField] CardType   cardType;
-    [SerializeField] int        number;
-    [SerializeField] int        point;
+    [SerializeField] public GameObject prefab;
+    [SerializeField] public CardType   cardType;
+    [SerializeField] public Sprite     cardSprite;
+    [SerializeField] public int        cardNumber; // 1, 2.. 11, 12, 13
+    [SerializeField] public string     cardText;   // 1, 2.. Q, K
+    [SerializeField] public int        point;
 
     public void OnHover(){
       // shine fx
@@ -19,7 +20,7 @@ namespace CardGame.World{
       // item move to board
     }
 
-    public Card Create(string cardNumber, int cardPoint, CardType cardType, string cardname = "NewCard"){
+    public Card Create(int cardNumber, CardType cardType){
       var newObject = Instantiate(prefab);
       newObject.name               = prefab.name;
       newObject.transform.position = Vector3.zero;
@@ -27,19 +28,16 @@ namespace CardGame.World{
 
       this.cardType = cardType;
 
-
-
       Card card = new Card.Builder().
-        WithName(cardname).
         WithNumber(cardNumber).
-        WithPoint(cardPoint).
-        WithSprite(cardType).
+        WithCardType(cardType).
         Build(prefab);
 
-      card.CastData(this);
       return card;
 
     }
+
+  
 
   }
 

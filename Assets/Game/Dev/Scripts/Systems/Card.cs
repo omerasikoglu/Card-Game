@@ -1,47 +1,62 @@
-using System;
 using RunTogether.Extensions;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CardGame.World{
 
   [SelectionBase]
   public class Card : MonoBehaviour{
-    [InlineEditor, ReadOnly] public CardData CardData;
+    [InlineEditor, ReadOnly] public o_CardData Data;
 
-    public void CastData(CardData cardData){
-      CardData = cardData;
+    public CardType CardType  {get; private set;}
+    public int      CardNumber{get; private set;} // 1,2.. 12, 13
+    public int      CardPoint {get; private set;}
+
+    Sprite CardSprite;
+    string CardText; // 1,2.. Q, K
+
+    void Init(){
+      transform.GetFirstChild<Image>(includeGrandChild: true).sprite = CardSprite;
+      transform.GetFirstChild<TMP_Text>(includeGrandChild: true).SetText(CardText);
     }
 
-    public string CardName  {get; private set;}
-    public string CardNumber{get; private set;}
-    public int    CardPoint {get; private set;}
-    public Sprite CardSprite{get; private set;}
-
     public class Builder{
-      string cardname;
-      string cardnumber; // 1,2,3 .. V,Q,K
+      int      cardnumber;
+      CardType cardType;
+
+      string cardText;
       int    cardPoint;
       Sprite cardSprite;
 
-      public Builder WithName(string cardname){
-        this.cardname = cardname;
-        return this;
-      }
-
-      public Builder WithNumber(string cardnumber){
+      public Builder WithNumber(int cardnumber){
         this.cardnumber = cardnumber;
+
+        cardText = cardnumber switch{
+          1    => "A",
+          < 11 => cardnumber.ToString(),
+          11   => "V",
+          12   => "Q",
+          13   => "K",
+          _    => string.Empty
+        };
+
+        cardPoint = cardnumber switch{
+          < 11 => cardnumber,
+          11   => 10,
+          12   => 10,
+          13   => 10,
+          _    => 0
+        };
+
         return this;
       }
 
-      public Builder WithPoint(int cardPoint){
-        this.cardPoint = cardPoint;
-        return this;
-      }
+      public Builder WithCardType(CardType cardType){
 
-      public Builder WithSprite(CardType cardType){
-        
-        this.cardSprite = ItemDatabase.CardTypeSpriteDic[cardType];
+        this.cardType = cardType;
+        cardSprite    = ItemDatabase.CardTypeSpriteDic[cardType];
         return this;
       }
 
@@ -51,23 +66,17 @@ namespace CardGame.World{
         GameObject newObject = Instantiate(prefab);
 
         Card card = newObject.GetOrAdd<Card>();
-        card.CardName   = cardname;
+
         card.CardNumber = cardnumber;
+        card.CardType   = cardType;
         card.CardPoint  = cardPoint;
+        card.CardText   = cardText;
         card.CardSprite = cardSprite;
+        card.Init();
+
         return card;
       }
     }
-
-    
-    // Sprite GetCardSprite(CardType cardType){
-    //   return cardType switch{
-    //     CardType.Diamonds => diamondsSprite, 
-    //     CardType.Hearts   => heartsSprite, 
-    //     CardType.Spades   => spadesSprite, 
-    //     CardType.Clubs    => clubsSprite, 
-    //     _                 => null
-    //   };
   }
 
 }

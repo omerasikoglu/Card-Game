@@ -25,6 +25,7 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-7202049493186996058-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-459564516-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-390543674-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1686041278-0
         values:
         - colorIndex: 0
           iconNameOrGuid: Favorite
@@ -40,3 +41,5 @@ MonoBehaviour:
           iconNameOrGuid: Terrain Icon
         - colorIndex: 0
           iconNameOrGuid: PreMatCylinder
+        - colorIndex: 4
+          iconNameOrGuid: 
