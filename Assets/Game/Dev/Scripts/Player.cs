@@ -9,30 +9,36 @@ namespace CardGame{
   public class Player : MonoBehaviour{
 
     [Inject] public BoardManager BoardManager{get; private set;} 
+    [Inject] public DeckManager DeckManager{get; private set;} 
     
     [SerializeField] Transform[] cardHoldTransforms;
     
-    PlayerHandManager playerHandManager;
-    PlayerInput       playerInput;
+    public PlayerHandManager PlayerHandManager{get; private set;}
+    public PlayerInput       PlayerInput      {get; private set;}
 
+  #region Core
     void Awake(){
-      playerHandManager = new (this, cardHoldTransforms);
-      playerInput       = new (this);
+      PlayerHandManager = new (this, cardHoldTransforms);
+      PlayerInput       = new (this);
     }
 
     void OnEnable(){
-      playerInput.OnEnable();
+      PlayerInput.OnEnable();
     }
 
     void OnDisable(){
-      playerInput.OnDisable();
+      PlayerInput.OnDisable();
     }
 
 
     void Update(){
-      playerInput.Update();
+      PlayerInput.Update();
     }
+  #endregion
 
+    public void AddCardToHand(){
+      PlayerHandManager.AddCardToYourHand();
+    }
   }
 
 }

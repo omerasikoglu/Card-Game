@@ -80,6 +80,7 @@ namespace CardGame{
           else{
             if (player.BoardManager.ChosenBoardPile != null){ // you picked board card before
               player.BoardManager.AddCardToPile(player.BoardManager.ChosenBoardPile, targetCard);
+              player.PlayerHandManager.RemoveCardFromYourHand(targetCard);
             }
             else{ // you need pick board card first
               DOTween.Complete(Keys.Tween.Card);
