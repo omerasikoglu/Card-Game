@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using CardGame.World;
+using UnityEngine;
 
 namespace CardGame.Systems{
 
-  public class DeckManager{
+  public class DeckManager : MonoBehaviour{
 
+    
+    
     Stack<Card> deck = new();
     
     readonly List<Player> player;
@@ -12,13 +15,16 @@ namespace CardGame.Systems{
     const int DECK_SIZE = 52;
     
 
-    public DeckManager(List<Player> player){
-      this.player = player;
-    }
+    // public DeckManager(List<Player> player){
+    //   this.player = player;
+    // }
     
     
     
     public void CreateDeck(){
+      
+      // var Card = new Card.Builder().WithName()
+      
       for (int i = 0; i < DECK_SIZE; i++){
         // Create a new card
       }
