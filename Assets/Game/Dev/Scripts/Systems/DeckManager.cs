@@ -3,35 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGame.World;
 using RunTogether.Extensions;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = System.Random;
 
 namespace CardGame.Systems{
 
-  public class DeckManager : MonoBehaviour{
-
-    [SerializeField] GameObject cardPrefab;
-
-    [SerializeField] Transform deckRoot;
+  public class DeckManager{
 
     Stack<Card> deck;
     List<Card>  temporaryDeck;
-
+    
+    readonly GameObject   cardPrefab;
+    readonly Transform    deckRoot;
     readonly List<Player> player;
-
-    Vector3 deckEuler;
+    readonly Vector3      deckEuler;
 
     const float CARD_HEIGHT     = 0.001f;
     const int   DECK_SIZE       = 52;
     const int   MAX_CARD_NUMBER = 13;
 
-    void Awake(){
+    public DeckManager(GameObject cardPrefab, Transform deckRoot){
+      this.cardPrefab = cardPrefab;
+      this.deckRoot   = deckRoot;
+
       deck      = new();
       deckEuler = new(-90f, 0f, -90f);
     }
 
-    [Button] void CreateDeck(){
+    public void CreateDeck(){
       var maxTypeCount = Enum.GetNames(typeof(CardType)).Length;
 
       for (int i = 1; i <= MAX_CARD_NUMBER; i++){
@@ -65,13 +64,20 @@ namespace CardGame.Systems{
       }
     }
 
-    // public DeckManager(List<Player> player){
-    //   this.player = player;
-    // }
+    public Card DrawCard(){
+      Debug.Log($" <color=cyan>{"draw card"}</color>");
+      if (deck.Count <= 0) return null;
+      Card card = deck.Pop();
+      card.transform.SetParent(null);
 
-    void DrawCard(){
-      // Draw a card from the deck
+      return card;
     }
+    
+    public void OpenCardToTable(){
+      
+    }
+    
+    public int GetDeckCount() => deck.Count;
 
     public Stack<Card> GetDeck() => deck;
   }

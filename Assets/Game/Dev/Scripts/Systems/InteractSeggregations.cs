@@ -20,11 +20,11 @@ namespace CardGame.World{
 
 #region Click
   public interface IClickInInteract : ITargetable{
-    void InteractJustPerformed();
+    void OnInteractJustPerformed();
   }
 
   public interface IClickOutInteract : ITargetable{
-    void InteractJustReleased();
+    void OnInteractJustReleased();
   }
 
   public interface IClickInteract : IClickInInteract, IClickOutInteract{ }

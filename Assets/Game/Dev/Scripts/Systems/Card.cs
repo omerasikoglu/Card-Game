@@ -1,3 +1,4 @@
+using CardGame.Systems;
 using RunTogether.Extensions;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -7,15 +8,16 @@ using UnityEngine.UI;
 namespace CardGame.World{
 
   [SelectionBase]
-  public class Card : MonoBehaviour{
-    [InlineEditor, ReadOnly] public o_CardData Data;
+  public class Card : MonoBehaviour, IClickInInteract{
 
+  #region Members
     public CardType CardType  {get; private set;}
     public int      CardNumber{get; private set;} // 1,2.. 12, 13
     public int      CardPoint {get; private set;}
 
     Sprite CardSprite;
     string CardText; // 1,2.. Q, K
+  #endregion
 
     void Init(){
       transform.GetFirstChild<Image>(includeGrandChild: true).sprite = CardSprite;
@@ -77,6 +79,24 @@ namespace CardGame.World{
         return card;
       }
     }
+
+  #region Implements
+    public bool IsInteractEnable(){
+      return true;
+    }
+
+    public void OnInteractJustPerformed(){
+      // TODO: if there is more than 1 card on the table choose it
+
+      Debug.Log($" <color=green>{"interact just performed"}</color>");
+    }
+  #endregion
+
+    [ShowInInspector]public CardPile AttachedCardPile{get; private set;}
+    public void SetAttachedCardPile(CardPile attachedCardPile){
+      AttachedCardPile = attachedCardPile;
+    }
+
   }
 
 }
