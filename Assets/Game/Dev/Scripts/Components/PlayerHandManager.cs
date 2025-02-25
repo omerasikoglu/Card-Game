@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CardGame.World;
+using RunTogether.Extensions;
 using UnityEngine;
 
 namespace CardGame.Components{
@@ -19,6 +20,7 @@ namespace CardGame.Components{
 
       holdingCards = new();
 
+      if(cardHoldTransforms.IsNullOrEmpty()) return;
       fourCardTransforms  = new Transform[4]{ cardHoldTransforms[0], cardHoldTransforms[2], cardHoldTransforms[4], cardHoldTransforms[6] };
       threeCardTransforms = new Transform[3]{ cardHoldTransforms[1], cardHoldTransforms[3], cardHoldTransforms[5] };
       twoCardTransforms   = new Transform[2]{ cardHoldTransforms[2], cardHoldTransforms[4] };

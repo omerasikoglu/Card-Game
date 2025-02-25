@@ -19,6 +19,12 @@ namespace CardGame.Utils{
   
   public static class UtilsClass{
 
+    public static float GetMobileScaleMultiplier(){
+      var screenRatio = (float) Screen.width / Screen.height;
+      
+      return screenRatio / (9f / 16f);
+    }
+    
     public static Vector2 GetPixelResolutionRatio(){
       float width  = 1080f / Screen.width;
       float height = 1920f / Screen.height;
