@@ -57,7 +57,7 @@ namespace CardGame.Systems{
       TotalWins   = GetInt(Keys.IO.WIN, TotalWins);
       TotalLosses = GetInt(Keys.IO.LOSE, TotalLosses);
 
-      Debug.Log($" <color=cyan>{"game data loaded"}</color>");
+      Debug.Log($" <color=cyan>{"game data pulled"}</color>");
       
       int GetInt(string key, int defaultValue){
         return PlayerPrefs.GetInt(key, defaultValue);

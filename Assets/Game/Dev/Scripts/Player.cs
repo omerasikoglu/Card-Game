@@ -1,31 +1,35 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace CardGame{
 
   public class Player : Entity{
     PlayerInput playerInput;
 
   #region Core
-    void Awake(){
-      PlayerHandManager = new(this, cardHoldTransforms);
-      playerInput       = new(this);
+    public override void Init(IReadOnlyList<Transform> cardHoldTransforms){
+      base.Init(cardHoldTransforms);
+      playerInput = new(this);
+
     }
 
-    // protected override void OnToggle(bool to){
-    //   base.OnToggle(to);
-    //   playerInput.OnToggle(to);
-    // }
-
-    protected override void OnTurnStart(Entity ctx){
-      playerInput.OnToggle(ctx == this);
+    public override void OnToggle(bool to){
+      base.OnToggle(to);
+      playerInput.OnToggle(to);
     }
 
-    void Update(){
+    protected override void OnNewTurnStart(Entity ctx){ 
+      // could be oppenents' turn
+      
+      bool isYourTurnStarted = ctx == this;
+      playerInput.OnToggle(isYourTurnStarted);
+    }
+
+    public void Update(){
       playerInput.Update();
     }
   #endregion
 
-    public void AddCardToHand(){
-      PlayerHandManager.AddCardToYourHand();
-    }
   }
 
 }

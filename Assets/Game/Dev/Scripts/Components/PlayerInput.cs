@@ -73,7 +73,7 @@ namespace CardGame{
         if (targetCardHit.AttachedCardPile != null) return;
         // targetCardHit.OnInteractJustPerformed();
         boardManager.AddCardToOneCardPile(targetCardHit);
-        player.PlayerHandManager.RemoveCardFromYourHand(targetCardHit);
+        player.HandManager.RemoveCardFromYourHand(targetCardHit);
       }
       else{ // there is more than 1 card pile
         if (boardManager.IsBoardCard(targetCardHit)){
@@ -82,7 +82,7 @@ namespace CardGame{
         else{
           if (boardManager.ChosenBoardPile != null){ // you picked board card before
             boardManager.AddCardToPile(boardManager.ChosenBoardPile, targetCardHit);
-            player.PlayerHandManager.RemoveCardFromYourHand(targetCardHit);
+            player.HandManager.RemoveCardFromYourHand(targetCardHit);
           }
           else{ // you need pick board card first
             DOTween.Complete(Keys.Tween.Card);

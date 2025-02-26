@@ -1,49 +1,50 @@
 using System.Collections.Generic;
 using System.Linq;
+using CardGame.Systems;
 using CardGame.World;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace CardGame{
 
   public class Opponent : Entity{
-
-    void Awake(){
-      PlayerHandManager = new(this, cardHoldTransforms);
-    }
-
-    protected override void OnTurnStart(Entity ctx){
+    protected override void OnNewTurnStart(Entity ctx){
       if (ctx != this) return;
       PlayBestCard();
 
     }
 
-    void PlayBestCard(){
-      var holdingCards = PlayerHandManager.GetHoldingCards();
-      var boardCards   = BoardManager.GetBoardCards();
+    async void PlayBestCard(){
+      await UniTask.WaitForSeconds(1f);
+
+      var holdingCards = HandManager.GetHoldingCards();
+      var boardCards   = BoardManager.GetBoardTopCards();
 
       List<Card> intersectCards = new();
 
       foreach (Card holdingCard in holdingCards){
         foreach (Card boardCardVARIABLE in boardCards){
-          if (holdingCard.CardType == boardCardVARIABLE.CardType){
+          if (holdingCard.CardNumber == boardCardVARIABLE.CardNumber){
             intersectCards.Add(holdingCard);
           }
         }
       }
 
       if (intersectCards.Count > 0){
-        var bestPlay = intersectCards.First(o => o.CardPoint == intersectCards.Max(p => p.CardPoint));
-        PlayAutomatically(bestPlay);
+        var bestPlay       = intersectCards.First(o => o.CardPoint == intersectCards.Max(p => p.CardPoint));
+        var availablePiles = BoardManager.GetAvailableCardPiles();
+        var targetPile     = availablePiles.First(o => o.PeekTopCard().CardNumber == bestPlay.CardNumber);
+        PlayAutomatically(bestPlay, targetPile);
       }
       else{
         var randomPlay = holdingCards[Random.Range(0, holdingCards.Count)];
-        PlayAutomatically(randomPlay);
+        var randomPile = BoardManager.GetAvailableCardPiles().OrderBy(o => Random.value).First();
+        PlayAutomatically(randomPlay, randomPile);
       }
 
-      void PlayAutomatically(Card card){
-        var targetPile = BoardManager.GetAvailableCardPiles().First();
+      void PlayAutomatically(Card card, CardPile targetPile){
         BoardManager.AddCardToPile(targetPile, card);
-        PlayerHandManager.RemoveCardFromYourHand(card);
+        HandManager.RemoveCardFromYourHand(card);
       }
     }
 

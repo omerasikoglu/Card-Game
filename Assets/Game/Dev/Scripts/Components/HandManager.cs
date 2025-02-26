@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace CardGame.Components{
 
-  public class PlayerHandManager{
+  public class HandManager{
 
   #region Members
     readonly List<Card>  holdingCards;
@@ -18,7 +18,7 @@ namespace CardGame.Components{
     const int HOLDING_MAX_CARD_COUNT = 4;
   #endregion
 
-    public PlayerHandManager(Entity entity, IReadOnlyList<Transform> cardHoldTransforms){
+    public HandManager(Entity entity, IReadOnlyList<Transform> cardHoldTransforms){
       this.entity = entity;
 
       holdingCards = new();
@@ -31,9 +31,8 @@ namespace CardGame.Components{
     }
 
   #region Set
-    public void AddCardToYourHand(){
+    public void AddCardToYourHand(Entity entity){
       if (holdingCards.Count >= HOLDING_MAX_CARD_COUNT) return;
-
       var topDeckCard = entity.DeckManager.DrawCard();
       if (topDeckCard == null) return;
 
@@ -41,7 +40,7 @@ namespace CardGame.Components{
 
       topDeckCard.transform.SetParent(GetTargetRoot());
 
-      var handCardEuler = new Vector3(60f, 0f, 0f);
+      var handCardEuler = GetCardEuler(this.entity);
       var duration      = 0.2f;
       var endPosition   = GetTargetRoot().position;
 
@@ -60,6 +59,14 @@ namespace CardGame.Components{
         GetTargetTransforms()[holdingCards.IndexOf(o)].position);
     }
   #endregion
+    
+    Vector3 GetCardEuler(Entity entity){
+      return entity switch{
+        Player   => new Vector3(60f, 0f, 0f),
+        Opponent => new Vector3(210f, 0f, 0f),
+        _        => Vector3.zero
+      };
+    }
 
     Transform GetTargetRoot(){
       return holdingCards.Count switch{

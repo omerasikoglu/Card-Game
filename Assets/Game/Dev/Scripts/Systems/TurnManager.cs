@@ -8,7 +8,7 @@ namespace CardGame.Systems{
 
   public class TurnManager{
     public event Action         OnCardDistributionStart = delegate{ };
-    public event Action<Entity> OnTurnStart             = delegate{ };
+    public event Action<Entity> OnNewTurnStart             = delegate{ };
 
     // [Inject] readonly Player      player;
     // [Inject] readonly Opponent    opponent;
@@ -23,10 +23,6 @@ namespace CardGame.Systems{
       this.entities = entities.ToList();
     }
 
-    public void Update(){
-      // Debug.Log($" entities.Count: <color=cyan>{entities.Count}</color>");
-    }
-    
   #region States
     public void StartGame(){
       // deckManager.CreateDeck();
@@ -36,19 +32,20 @@ namespace CardGame.Systems{
       OnCardDistributionStart.Invoke();
     }
 
-    public void FirstTurnStart(){
+    public void FirstTimeStart(){
       currentEntity = entities[0];
-      OnTurnStart.Invoke(currentEntity);
+      Debug.Log($" <color=red>{entities[0]}'s turn!</color>");
+      OnNewTurnStart.Invoke(currentEntity);
     }
 
-    public void EndTurn(){
+    public void NextPlayerTurn(){
       NextTurn();
 
       void NextTurn(){
         int index = entities.IndexOf(currentEntity);
         index         = (index + 1) % entities.Count;
         currentEntity = entities[index];
-        OnTurnStart.Invoke(currentEntity);
+        OnNewTurnStart.Invoke(currentEntity);
       }
     }
     

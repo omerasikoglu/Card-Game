@@ -11,7 +11,7 @@ namespace CardGame.Systems{
 
   public class BoardManager{
 
-    [Inject] readonly DeckManager deckManager;
+    [Inject] readonly DeckManager    deckManager;
     [Inject] readonly SaveLoadSystem saveLoadSystem;
 
     bool isStartingBoardPilesRemoved;
@@ -43,11 +43,11 @@ namespace CardGame.Systems{
       }
 
     }
-    
+
     public List<CardPile> GetAvailableCardPiles(){
       var fourPileList = cardPiles.Where(o => o != null).ToList();
-      var onePileList = new List<CardPile>{ oneCardPile };
-      
+      var onePileList  = new List<CardPile>{ oneCardPile };
+
       return isStartingBoardPilesRemoved ? onePileList : fourPileList;
     }
 
@@ -114,11 +114,17 @@ namespace CardGame.Systems{
       saveLoadSystem.UpdateCurrency(point);
     }
 
-    public IEnumerable<Card> GetBoardCards(){
-      var firstFourPile = cardPiles.SelectMany(o => o.GetCards()).ToList();
-      var singularPile  = oneCardPile.GetCards();
-      var allCards      = firstFourPile.Concat(singularPile).ToList();
-      return allCards;
+    public IEnumerable<Card> GetBoardTopCards(){
+      List<Card> topCards;
+
+      if (IsFourCardPilesRemoved()){
+        topCards = new List<Card>{ oneCardPile.PeekTopCard() };
+      }
+      else{
+        topCards = cardPiles.Where(o => o.PeekTopCard() != null).Select(o => o.PeekTopCard()).ToList();
+      }
+
+      return topCards;
     }
 
   }
