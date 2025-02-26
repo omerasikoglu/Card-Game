@@ -1,3 +1,4 @@
+using CardGame.UI;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using VContainer;
@@ -9,21 +10,22 @@ namespace CardGame.Systems{
 
     [Title("Deck Manager")]
     [SerializeField] GameObject cardPrefab;
-    [SerializeField] Transform  deckRoot;
+    [SerializeField] Transform deckRoot;
 
     [Title("Board Manager")]
     [SerializeField] Transform[] fourCardPileRoots;
-    [SerializeField] Transform   oneCardPileRoot;
+    [SerializeField] Transform oneCardPileRoot;
 
     protected override void Configure(IContainerBuilder builder){
       base.Configure(builder);
 
       builder.RegisterComponentInHierarchy<GameManager>();
-      
+      builder.RegisterComponentInHierarchy<AudioManager>();
+      builder.RegisterComponentInHierarchy<CanvasController>();
+
       builder.Register<Player>(Lifetime.Singleton);
       builder.Register<Opponent>(Lifetime.Singleton);
-      
-      
+
       builder.Register<DeckManager>(Lifetime.Singleton).WithParameter(cardPrefab).WithParameter(deckRoot);
       builder.Register<BoardManager>(Lifetime.Singleton).WithParameter(fourCardPileRoots).WithParameter(oneCardPileRoot);
       builder.Register<TurnManager>(Lifetime.Singleton);

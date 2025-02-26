@@ -7,16 +7,6 @@ using UnityEngine.SceneManagement;
 
 namespace CardGame.Utils{
 
-  [Serializable] public struct MinMax{
-    public float Min;
-    public float Max;
-
-    public MinMax(float min, float max){
-      Min = min;
-      Max = max;
-    }
-  }
-  
   public static class UtilsClass{
 
     public static float GetMobileScaleMultiplier(){

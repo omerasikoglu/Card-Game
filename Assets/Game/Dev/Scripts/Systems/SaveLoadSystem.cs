@@ -34,7 +34,7 @@ namespace CardGame.Systems{
       get => totalLosses;
       set{
         totalLosses = value;
-        Save(Keys.IO.LOSE, value);
+        Save(Keys.IO.LOST, value);
         OnTotalLoseChanged.Invoke(value);
       }
     }
@@ -55,15 +55,18 @@ namespace CardGame.Systems{
     void LoadGameData(){
       Currency    = GetInt(Keys.IO.CURRENCY, Currency);
       TotalWins   = GetInt(Keys.IO.WIN, TotalWins);
-      TotalLosses = GetInt(Keys.IO.LOSE, TotalLosses);
+      TotalLosses = GetInt(Keys.IO.LOST, TotalLosses);
 
       Debug.Log($" <color=cyan>{"game data pulled"}</color>");
-      
-      int GetInt(string key, int defaultValue){
-        return PlayerPrefs.GetInt(key, defaultValue);
-      }
     }
 
+    public int Load(string key){
+      return GetInt(key, 0);
+    }
+
+    int GetInt(string key, int defaultValue){
+      return PlayerPrefs.GetInt(key, defaultValue);
+    }
   }
 
 }

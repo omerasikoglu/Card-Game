@@ -27,6 +27,9 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-390543674-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1278229551-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1633151461-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-414967382-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1714065636-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-237682516-0
         values:
         - colorIndex: 0
           iconNameOrGuid: Favorite
@@ -46,3 +49,9 @@ MonoBehaviour:
           iconNameOrGuid: Favorite
         - colorIndex: 0
           iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: AudioClip Icon
+        - colorIndex: 0
+          iconNameOrGuid: Canvas Icon
+        - colorIndex: 3
+          iconNameOrGuid: 

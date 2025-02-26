@@ -5,7 +5,7 @@ namespace RunTogether.Extensions{
 
   public static class StringExtensions{
 
-    public static int ConvertToCharlessInt(this string value){ // !: Remove chars and convert to int
+    public static int ConvertToInt(this string value){ // !: Remove chars and convert to int
       if (string.IsNullOrEmpty(value)) return default;
 
       var charArray = value.ToCharArray();

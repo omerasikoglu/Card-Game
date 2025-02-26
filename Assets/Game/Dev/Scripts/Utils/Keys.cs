@@ -5,7 +5,7 @@ namespace CardGame.Utils{
     public struct IO{
       public const string CURRENCY = "currency";
       public const string WIN      = "total_win";
-      public const string LOSE     = "total_lose";
+      public const string LOST     = "total_lose";
     }
 
     public struct LayerMask{
@@ -17,6 +17,14 @@ namespace CardGame.Utils{
 
     public struct Tween{
       public const string Card = "CardMoveFromHandTween";
+      public const string UI = "UIElementScaleChangeTween";
+    }
+ 
+    public struct Sfx{
+      public const string ButtonClickSfx = "ButtonClickSfx";
+      public const string WinSfx         = "WinSfx";
+      public const string LostSfx        = "LostSfx";
+      public const string SnapSfx        = "SnapSfx";
     }
 
     public struct Tag{
@@ -30,6 +38,14 @@ namespace CardGame.Utils{
       public const int ACE        = 1; // for each ace +1
       public const int MORE_CARD  = 2;
       public const int MORE_CLUBS = 3; // sinek
+    }
+    
+    public struct UI{
+      public const string Main  = "Main Menu";
+      public const string Lobby = "Create Lobby";
+      public const string Table = "Create Table";
+      public const string InGame = "In Game";
+      public const string Info = "Player Info";
     }
 
     public struct Bet{
