@@ -12,6 +12,7 @@ namespace CardGame.Systems{
   public class BoardManager{
 
     [Inject] readonly DeckManager deckManager;
+    [Inject] readonly SaveLoadSystem saveLoadSystem;
 
     bool isStartingBoardPilesRemoved;
 
@@ -110,7 +111,7 @@ namespace CardGame.Systems{
     }
 
     public void GainPoint(int point){
-      // TODO: Point manager update
+      saveLoadSystem.UpdateCurrency(point);
     }
 
     public IEnumerable<Card> GetBoardCards(){
