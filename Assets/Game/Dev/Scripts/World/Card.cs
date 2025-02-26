@@ -11,12 +11,14 @@ namespace CardGame.World{
   public class Card : MonoBehaviour, IClickInInteract{
 
   #region Members
+    Sprite CardSprite;
+    string CardText; // 1,2.. Q, K
+
+    [ShowInInspector] public CardPile AttachedCardPile{get; private set;}
+
     public CardType CardType  {get; private set;}
     public int      CardNumber{get; private set;} // 1,2.. 12, 13
     public int      CardPoint {get; private set;}
-
-    Sprite CardSprite;
-    string CardText; // 1,2.. Q, K
   #endregion
 
     void Init(){
@@ -88,11 +90,9 @@ namespace CardGame.World{
     public void OnInteractJustPerformed(){
       // TODO: if there is more than 1 card on the table choose it
 
-      Debug.Log($" <color=green>{"interact just performed"}</color>");
     }
   #endregion
 
-    [ShowInInspector]public CardPile AttachedCardPile{get; private set;}
     public void SetAttachedCardPile(CardPile attachedCardPile){
       AttachedCardPile = attachedCardPile;
     }

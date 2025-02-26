@@ -65,7 +65,6 @@ namespace CardGame.Systems{
     }
 
     public Card DrawCard(){
-      Debug.Log($" <color=cyan>{"draw card"}</color>");
       if (deck.Count <= 0) return null;
       Card card = deck.Pop();
       card.transform.SetParent(null);

@@ -19,9 +19,11 @@ namespace CardGame.Systems{
 
       builder.RegisterComponentInHierarchy<GameManager>();
       builder.RegisterComponentInHierarchy<Player>();
+      builder.RegisterComponentInHierarchy<Opponent>();
 
       builder.Register<DeckManager>(Lifetime.Singleton).WithParameter(cardPrefab).WithParameter(deckRoot);
       builder.Register<BoardManager>(Lifetime.Singleton).WithParameter(cardOpenRoots).WithParameter(oneCardOpenRoot);
+      builder.Register<TurnManager>(Lifetime.Singleton);
     }
 
   }

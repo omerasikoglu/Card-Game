@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using CardGame.Utils;
 using CardGame.World;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -34,12 +36,48 @@ namespace CardGame.Systems{
       cards.Push(card);
       var endPosition = root.position + Vector3.zero.With(z: cards.Count * -cardPileCardHeight);
 
-      card.transform.DOMove(endPosition, deckToBoardDuration);
-      card.transform.DORotate(cardPileCardEuler, deckToBoardDuration);
+      DOTween.Complete(Keys.Tween.Card);
+      card.transform.DOMove(endPosition, deckToBoardDuration).SetId(Keys.Tween.Card);
+      card.transform.DORotate(cardPileCardEuler, deckToBoardDuration).SetId(Keys.Tween.Card);
 
-      await UniTask.WaitForSeconds(deckToBoardDuration);
+      await UniTask.WaitUntil(() => card.transform.position == endPosition);
 
-      // CheckCardCount();
+      CompareTopTwoCards();
+    }
+
+    void CompareTopTwoCards(){
+      if (cards.Count < 2) return;
+
+      Card topCard  = cards.Peek();
+      Card nextCard = cards.ElementAt(1);
+
+      if (topCard.CardNumber == nextCard.CardNumber){
+        GainPile();
+      }
+
+      async void GainPile(){
+        var  point        = 0;
+        bool isSnap       = cards.Count == 2;
+        if (isSnap) point += Keys.Point.SNAP;
+
+        point += cards.Sum(o => o.CardPoint);
+
+        boardManager.GainPoint(point);
+
+        foreach (Card card in cards){
+          await PopCard(card);
+          Object.Destroy(card.gameObject);
+        }
+
+        cards.Clear();
+        boardManager.CheckPiles(this);
+      }
+
+      async UniTask PopCard(Card card){
+        var duration = 0.1f;
+        card.transform.DOMoveY(card.transform.position.y + 0.1f, duration).SetEase(Ease.Linear);
+        await UniTask.WaitForSeconds(duration);
+      }
     }
 
     public List<Card> GetAllCards(){
@@ -49,7 +87,7 @@ namespace CardGame.Systems{
     void CheckCardCount(){
       if (cards.Count <= 0){
         cards.Clear();
-        boardManager.RemovePile(this);
+        boardManager.CheckPiles(this);
       }
     }
 
@@ -60,7 +98,7 @@ namespace CardGame.Systems{
     public void ClearAll(){
       cards.Clear();
     }
-    
+
     public Card PeekTopCard(){
       return cards.Peek();
     }

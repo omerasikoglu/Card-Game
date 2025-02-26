@@ -6,15 +6,31 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class GameManager : MonoBehaviour{
-    [Inject] readonly IObjectResolver resolver;
-    [Inject] readonly DeckManager     deckManager;
-    [Inject] readonly BoardManager boardManager;
-    [Inject] readonly Player player;
+    IObjectResolver resolver;
+    DeckManager     deckManager;
+    BoardManager    boardManager;
+    Player          player;
+    TurnManager     turnManager;
 
-    [Button] public void CREATE_DECK()    => deckManager.CreateDeck();
-    [Button] public void AddCardToPiles() => boardManager.AddCardToPiles();
+    [Inject] public void Init(IObjectResolver resolver, TurnManager turnManager, DeckManager deckManager, BoardManager boardManager, Player player){
+      this.resolver     = resolver;
+      this.turnManager  = turnManager;
+      this.deckManager  = deckManager;
+      this.boardManager = boardManager;
+      this.player       = player;
+      
+      turnManager.SetPlayers(new Entity[]{ player, resolver.Resolve<Opponent>() });
+    }
+
+    [Button] public void CREATE_DECK()      => deckManager.CreateDeck();
+    [Button] public void AddCardToPiles()   => boardManager.AddOneCardToEachPiles();
     [Button] public void AddCardToPlayers() => player.AddCardToHand();
+    [Button] public void FIRST_TURN_START() => turnManager.FirstTurnStart();
+    [Button] public void END_TURN() => turnManager.EndTurn();
 
+    void Update(){
+      turnManager.Update();
+    }
   }
 
 }

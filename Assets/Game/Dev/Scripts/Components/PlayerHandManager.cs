@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using CardGame.Utils;
 using CardGame.World;
 using DG.Tweening;
 using RunTogether.Extensions;
@@ -11,14 +12,14 @@ namespace CardGame.Components{
 
   #region Members
     readonly List<Card>  holdingCards;
-    readonly Player      player;
+    readonly Entity      entity;
     readonly Transform[] fourCardTransforms, threeCardTransforms, twoCardTransforms, oneCardTransform;
 
     const int HOLDING_MAX_CARD_COUNT = 4;
   #endregion
 
-    public PlayerHandManager(Player player, IReadOnlyList<Transform> cardHoldTransforms){
-      this.player = player;
+    public PlayerHandManager(Entity entity, IReadOnlyList<Transform> cardHoldTransforms){
+      this.entity = entity;
 
       holdingCards = new();
 
@@ -33,7 +34,7 @@ namespace CardGame.Components{
     public void AddCardToYourHand(){
       if (holdingCards.Count >= HOLDING_MAX_CARD_COUNT) return;
 
-      var topDeckCard = player.DeckManager.DrawCard();
+      var topDeckCard = entity.DeckManager.DrawCard();
       if (topDeckCard == null) return;
 
       holdingCards.Add(topDeckCard);
@@ -43,16 +44,18 @@ namespace CardGame.Components{
       var handCardEuler = new Vector3(60f, 0f, 0f);
       var duration      = 0.2f;
       var endPosition   = GetTargetRoot().position;
-      topDeckCard.transform.DOMove(endPosition, duration);
-      topDeckCard.transform.DORotate(handCardEuler, duration);
-      
+
+      DOTween.Complete(Keys.Tween.Card);
+      topDeckCard.transform.DOMove(endPosition, duration).SetId(Keys.Tween.Card);
+      topDeckCard.transform.DORotate(handCardEuler, duration).SetId(Keys.Tween.Card);
+
       holdingCards.Where(o => o != holdingCards.Last()).ForEach(o => o.transform.position =
         GetTargetTransforms()[holdingCards.IndexOf(o)].position);
     }
 
     public void RemoveCardFromYourHand(Card card){
       holdingCards.Remove(card);
-      
+
       holdingCards.ForEach(o => o.transform.position =
         GetTargetTransforms()[holdingCards.IndexOf(o)].position);
     }
@@ -76,7 +79,11 @@ namespace CardGame.Components{
         1 => oneCardTransform,
         _ => null
       };
+
     }
+
+    public List<Card> GetHoldingCards() => holdingCards;
+
   }
 
 }
