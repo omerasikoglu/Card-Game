@@ -1,10 +1,13 @@
 using System;
 using CardGame.Utils;
 using UnityEngine;
+using VContainer;
 
 namespace CardGame.Systems{
 
   public class SaveLoadSystem{
+    [Inject] readonly TurnHandler turnHandler;
+
     public event Action<int> OnCurrencyUpdated  = delegate{ };
     public event Action<int> OnTotalWinChanged  = delegate{ };
     public event Action<int> OnTotalLoseChanged = delegate{ };
@@ -39,19 +42,37 @@ namespace CardGame.Systems{
       }
     }
 
-    public int CurrentBet{get; private set;}
+    public int CurrentBet{get; private set;} // !: 1 player's bet
   #endregion
 
     public SaveLoadSystem(){
       LoadGameData();
     }
 
-    public void UpdateCurrency(int delta) => Currency += delta;
-    public void IncreaseTotalWins()       => ++TotalWins;
-    public void IncreaseTotalLosses()     => ++TotalLosses;
-    public void SetCurrentBet(int to)     => CurrentBet = to;
+    public void OnToggle(bool to){
+      if (to){
+        turnHandler.OnGameEnded += GameEnded;
+      }
+      else{
+        turnHandler.OnGameEnded -= GameEnded;
+      }
 
-    
+      void GameEnded(object sender, TurnHandler.ResultEventArgs e){
+        if (e.IsWin){
+          IncreaseTotalWins();
+          UpdateCurrency(e.TotalBetSumCount);
+        }
+        else{
+          IncreaseTotalLosses();
+        }
+      }
+    }
+
+    public void UpdateCurrency(int delta) => Currency += delta;
+    public void SetCurrentBet(int to)     => CurrentBet = to;
+    void        IncreaseTotalWins()       => ++TotalWins;
+    void        IncreaseTotalLosses()     => ++TotalLosses;
+
     void Save(string key, int to){
       PlayerPrefs.SetInt(key, to);
     }
@@ -61,7 +82,9 @@ namespace CardGame.Systems{
       TotalWins   = GetInt(Keys.IO.WIN, 0);
       TotalLosses = GetInt(Keys.IO.LOST, 0);
 
-      Debug.Log($" <color=cyan>{"game data pulled"}</color>");
+      if (Currency <= Keys.IO.CURRENCY_PITY){
+        UpdateCurrency(Keys.IO.CURRENCY_DEFAULT);
+      }
     }
 
     public int Load(string key){

@@ -19,9 +19,7 @@ namespace CardGame.Systems{
     public Action<bool> OnCardPlayed       = delegate{ }; // !: isDealerDraw, krupiye
     public Action       OnCardPilesCreated = delegate{ };
 
-    public event Action<int, Entity> OnScoreChanged = delegate{ };
-
-    int  score;
+    
     bool isStartingBoardPilesRemoved;
 
     readonly List<CardPile> cardPiles;
@@ -29,13 +27,7 @@ namespace CardGame.Systems{
 
     public CardPile ChosenBoardPile{get; private set;} = null;
 
-    public int Score{
-      get => score;
-      set{
-        score = value;
-        OnScoreChanged.Invoke(value, turnHandler.GetActiveEntity());
-      }
-    }
+   
 
     public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
       cardPiles   = new();
@@ -138,10 +130,14 @@ namespace CardGame.Systems{
       }
     }
 
-    public void GainScorePoint(int score){
-      UpdateScore(score);
-
-      void UpdateScore(int delta) => Score += delta;
+    public void UpdateScore(int delta, bool isSnap, int cardCount, int aceCount, int clubsCount){
+      var activeEntity = turnHandler.GetActiveEntity();
+      activeEntity.UpdateScore(delta);
+      activeEntity.UpdateCardCount(cardCount);
+      activeEntity.UpdateAceCount(aceCount);
+      activeEntity.UpdateClubsCount(clubsCount);
+      if(isSnap) activeEntity.UpdateSnapCount(1);
+      
     }
 
     public bool IsOneCardPileEmpty(){

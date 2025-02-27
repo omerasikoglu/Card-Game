@@ -31,6 +31,7 @@ namespace CardGame.Systems{
 
     public async UniTask AddCard(Card card, bool isDealerDraw){
       card.SetAttachedCardPile(this);
+      card.SetIsInDeck(false);
       card.transform.SetParent(root);
       cards.Push(card);
       var endPosition = root.position + Vector3.zero.With(z: cards.Count * -cardPileCardHeight);
@@ -42,7 +43,7 @@ namespace CardGame.Systems{
       await UniTask.WaitUntil(() => card.transform.position == endPosition);
 
       CompareTopTwoCards();
-      
+
       async void CompareTopTwoCards(){
         if (cards.Count < 2){
           boardManager.OnCardPlayed.Invoke(isDealerDraw);
@@ -56,7 +57,7 @@ namespace CardGame.Systems{
           ClearPile();
           await UniTask.WaitUntil(() => cards.IsNullOrEmpty());
         }
-      
+
         boardManager.OnCardPlayed.Invoke(isDealerDraw);
 
         async void ClearPile(){
@@ -66,7 +67,13 @@ namespace CardGame.Systems{
 
           point += cards.Sum(o => o.CardPoint);
 
-          boardManager.GainScorePoint(point);
+          boardManager.UpdateScore(
+            point,
+            isSnap,
+            cards.Count,
+            cards.Count(o => o.CardNumber == 1),
+            cards.Count(o => o.CardType == CardType.Clubs)
+          );
 
           foreach (Card card in cards){
             await PopCard(card);
@@ -84,8 +91,6 @@ namespace CardGame.Systems{
         }
       }
     }
-
-    
 
     public List<Card> GetAllCards(){
       return new(cards);

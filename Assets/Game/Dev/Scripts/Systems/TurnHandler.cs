@@ -9,27 +9,27 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class TurnHandler{
-    public event Action                        OnGameStart = delegate{ };
+    public event Action<int>                   OnGameStart = delegate{ };
     public event EventHandler<ResultEventArgs> OnGameEnded = delegate{ };
 
     public class ResultEventArgs : EventArgs{
       public readonly bool IsWin;
       public readonly int  Score;
-      public readonly int  BetCount;
+      public readonly int  TotalBetSumCount;
 
       public readonly int  TotalSnapCount;
       public readonly int  TotalAceCount;
       public readonly bool MoreCards;
       public readonly bool MoreClubs;
 
-      public ResultEventArgs(bool isWin, int betCount, int score, int totalSnapCount, int totalAceCount, bool moreCards, bool moreClubs){
-        IsWin          = isWin;
-        BetCount       = betCount;
-        Score          = score;
-        TotalSnapCount = totalSnapCount;
-        TotalAceCount  = totalAceCount;
-        MoreCards      = moreCards;
-        MoreClubs      = moreClubs;
+      public ResultEventArgs(bool isWin, int totalBetSumCount, int score, int totalSnapCount, int totalAceCount, bool moreCards, bool moreClubs){
+        IsWin            = isWin;
+        TotalBetSumCount = totalBetSumCount;
+        Score            = score;
+        TotalSnapCount   = totalSnapCount;
+        TotalAceCount    = totalAceCount;
+        MoreCards        = moreCards;
+        MoreClubs        = moreClubs;
       }
     }
 
@@ -39,7 +39,7 @@ namespace CardGame.Systems{
     CanvasController canvasController;
     DeckManager      deckManager;
     BoardManager     boardManager;
-    SaveLoadSystem  saveLoadSystem;
+    SaveLoadSystem   saveLoadSystem;
 
     List<Entity> entities; // AI included
 
@@ -49,7 +49,7 @@ namespace CardGame.Systems{
       this.canvasController = canvasController;
       this.deckManager      = deckManager;
       this.boardManager     = boardManager;
-      this.saveLoadSystem     = saveLoadSystem;
+      this.saveLoadSystem   = saveLoadSystem;
     }
 
     public void SetPlayers(IEnumerable<Entity> entities){
@@ -73,10 +73,21 @@ namespace CardGame.Systems{
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
       void StartGame(){
-        OnGameStart.Invoke();
+        OnGameStart.Invoke(saveLoadSystem.CurrentBet * entities.Count);
       }
 
-      void QuitGame(){ }
+      void QuitGame(){
+        OnGameEnded.Invoke(this,
+          new ResultEventArgs(
+            false,
+            saveLoadSystem.CurrentBet * entities.Count,
+            entities.First().Score,
+            entities.First().SnapCount,
+            entities.First().AceCount,
+            entities.Where(o => o != entities[0]).All(o => entities.First().CardCount > o.CardCount),
+            entities.First().ClubsCount >= 2
+          ));
+      }
 
       async void DistributeCards(){
         const float duration = 0.2f;
@@ -102,15 +113,19 @@ namespace CardGame.Systems{
         bool isDeckEmpty     = deckManager.IsDeckEmpty();
 
         if (isAllHandsEmpty && isDeckEmpty){ // Game Ended
+          var  player       = entities.First();
+          bool isPlayerWin  = entities.All(o => player.Score >= o.Score);
+          bool haveMoreCard = entities.Where(o => o != entities[0]).All(o => player.CardCount > o.CardCount);
+
           OnGameEnded.Invoke(this,
             new ResultEventArgs(
-              true,
-              saveLoadSystem.CurrentBet * 2,
-              boardManager.Score,
-              0,
-              0,
-              false,
-              false
+              isPlayerWin,
+              saveLoadSystem.CurrentBet * entities.Count,
+              player.Score,
+              player.SnapCount,
+              player.AceCount,
+              haveMoreCard,
+              player.ClubsCount >= 2
             ));
         }
         else if (isAllHandsEmpty && !isDeckEmpty){

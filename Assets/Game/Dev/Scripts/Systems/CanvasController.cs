@@ -129,35 +129,43 @@ namespace CardGame.UI{
         }
 
         void OpenWinPanel(TurnHandler.ResultEventArgs e){
-          var moreCardText  = e.MoreCards ? " + 2" : "";
-          var moreClubsText = e.MoreClubs ? " + 3" : "";
+          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : " 0";
+          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : " 0";
+          var moreCardText  = e.MoreCards ? " + 2" : " + 0";
+          var moreClubsText = e.MoreClubs ? " + 3" : " + 0";
 
-          var resultText = $" + {e.TotalSnapCount} x 10\n" +
-                           $" + {e.TotalAceCount} x 1\n" +
+          var resultText = $" + {snapText} \n" +
+                           $" + {aceText} \n" +
                            $"{moreCardText}\n" +
                            $"{moreClubsText}";
 
           inGamePanel.Toggle(false);
-          winBetText.SetText(e.BetCount.ToString("C0"));
+          winBetText.SetText(e.TotalBetSumCount.ToString("C0"));
           winResultText.SetText(resultText);
-          winTotalPointText.SetText(e.Score.ToString("C0"));
+          winTotalPointText.SetText("Score: " + e.Score);
           winPanel.Toggle(true);
+          
+          audioManager.PlaySound(SoundType.WinSfx);
         }
 
         void OpenLostPanel(TurnHandler.ResultEventArgs e){
-          var moreCardText  = e.MoreCards ? " + 2" : "";
-          var moreClubsText = e.MoreClubs ? " + 3" : "";
+          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : " 0";
+          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : " 0";
+          var moreCardText  = e.MoreCards ? " + 2" : " + 0";
+          var moreClubsText = e.MoreClubs ? " + 3" : " + 0";
 
-          var resultText = $" + {e.TotalSnapCount} x 10\n" +
-                           $" + {e.TotalAceCount} x 1\n" +
+          var resultText = $" + {snapText} \n" +
+                           $" + {aceText} \n" +
                            $"{moreCardText}\n" +
                            $"{moreClubsText}";
 
           inGamePanel.Toggle(false);
-          lostBetText.SetText(e.BetCount.ToString("C0"));
+          lostBetText.SetText(saveLoadSystem.CurrentBet.ToString("C0"));
           lostResultText.SetText(resultText);
-          lostTotalPointText.SetText(e.Score.ToString("C0"));
+          lostTotalPointText.SetText("Score: " + e.Score);
           lostPanel.Toggle(true);
+          
+          audioManager.PlaySound(SoundType.LostSfx);
         }
       }
     }
@@ -233,6 +241,10 @@ namespace CardGame.UI{
         mainMenuPanel.Toggle(false);
 
         playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
+        
+        createNewbieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NEWBIES.Min;
+        createRookieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.ROOKIES.Min;
+        createNobleLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NOBLES.Min;
 
         lobbyPanel.Toggle(true);
       }
@@ -324,6 +336,8 @@ namespace CardGame.UI{
         saveLoadSystem.SetCurrentBet(currentBetText.text.ConvertToInt());
         createTablePanel.Toggle(false);
         inGamePanel.Toggle(true);
+        
+        saveLoadSystem.UpdateCurrency(-saveLoadSystem.CurrentBet);
         OnGameStart.Invoke();
       }
 

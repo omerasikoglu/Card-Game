@@ -41,9 +41,6 @@ namespace CardGame.Systems{
       turnHandler.SetPlayers(new Entity[]{ player, opponent });
     }
 
-    [Button] public void CREATE_DECK()    => deckManager.CreateDeck();
-    // [Button] public void AddCardToPiles() => boardManager.AddOneCardToEachPiles();
-
     [Button] public async UniTaskVoid AddCardToPlayers(){
       const int   handSize = 4;
       const float duration = 0.1f;
@@ -71,6 +68,7 @@ namespace CardGame.Systems{
       player.OnToggle(to);
       opponent.OnToggle(to);
       turnHandler.OnToggle(to);
+      saveLoadSystem.OnToggle(to);
     }
 
     // void Start(){

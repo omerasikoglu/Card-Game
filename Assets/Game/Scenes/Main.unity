@@ -2361,9 +2361,9 @@ RectTransform:
   - {fileID: 2003018493}
   m_Father: {fileID: 480422255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 539.8177, y: -1104.73}
   m_SizeDelta: {x: 0, y: 491.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &401554089
@@ -2569,8 +2569,21 @@ MonoBehaviour:
   - Source: {fileID: 0}
     AudioClip: {fileID: 8300000, guid: 56c030ee3e741a84596aadd2cc574cf1, type: 3}
     SoundType: 0
-    Volume: 0.5
+    Volume: 0.01
     Pitch: 1
+    PlayOnAwake: 0
+  - Source: {fileID: 0}
+    AudioClip: {fileID: 8300000, guid: 66dcb18466702394fafc8805b0280119, type: 3}
+    SoundType: 2
+    Volume: 0.02
+    Pitch: 1
+    PlayOnAwake: 0
+  - Source: {fileID: 0}
+    AudioClip: {fileID: 8300000, guid: a04ea1297eae8aa418dd508ca5f34ba9, type: 3}
+    SoundType: 1
+    Volume: 0.01
+    Pitch: 1
+    PlayOnAwake: 0
 --- !u!81 &414967385
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4464,7 +4477,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 539.8177, y: -300}
+  m_AnchoredPosition: {x: 539.7301, y: -300}
   m_SizeDelta: {x: 1000, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &664046989
@@ -5147,7 +5160,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 539.8177, y: -719.6633}
+  m_AnchoredPosition: {x: 539.7301, y: -719.6633}
   m_SizeDelta: {x: 1000, y: 390.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &824156772
@@ -5904,7 +5917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -6848,7 +6861,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -8121,7 +8134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -9527,7 +9540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 539.8177, y: -1084.9767}
+  m_AnchoredPosition: {x: 539.7301, y: -1084.9767}
   m_SizeDelta: {x: 0, y: 491.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1356913667
@@ -10547,7 +10560,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1485753092
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11640,7 +11653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: YOU WIN
+  m_text: YOU WON
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a1cd9a1d3c11d734c9aaa59acbfdf4f2, type: 2}
   m_sharedMaterial: {fileID: -8571848860543967754, guid: a1cd9a1d3c11d734c9aaa59acbfdf4f2, type: 2}
@@ -13335,9 +13348,9 @@ RectTransform:
   - {fileID: 126194917}
   m_Father: {fileID: 480422255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 539.8177, y: -300}
   m_SizeDelta: {x: 1000, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1850410868
@@ -14897,9 +14910,9 @@ RectTransform:
   - {fileID: 2101444919}
   m_Father: {fileID: 480422255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 539.8177, y: -729.54}
   m_SizeDelta: {x: 1000, y: 184.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &2028597620 stripped

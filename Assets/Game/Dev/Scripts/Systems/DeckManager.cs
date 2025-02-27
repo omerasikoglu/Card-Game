@@ -55,7 +55,7 @@ namespace CardGame.Systems{
       }
     }
 
-    public async void CreateDeck(){
+    public async void CreateDeck(int totalBet){
       ClearDeck();
 
       for (int i = 1; i <= MAX_CARD_NUMBER; i++){
@@ -120,6 +120,7 @@ namespace CardGame.Systems{
     public bool IsDeckFull(){
       return deck.Count == DECK_SIZE;
     }
+    
   }
 
 }

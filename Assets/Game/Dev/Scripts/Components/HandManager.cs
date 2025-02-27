@@ -39,6 +39,7 @@ namespace CardGame.Components{
       holdingCards.Add(topDeckCard);
 
       topDeckCard.transform.SetParent(GetTargetRoot());
+      topDeckCard.SetIsInDeck(false);
 
       var handCardEuler = GetCardEuler(this.entity);
       var duration      = 0.2f;

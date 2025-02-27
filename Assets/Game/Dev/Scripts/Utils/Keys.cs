@@ -10,6 +10,7 @@ namespace CardGame.Utils{
       public const string LOST     = "total_lose";
 
       public const int CURRENCY_DEFAULT = 50000;
+      public const int CURRENCY_PITY = 1000;
     }
 
     public struct LayerMask{

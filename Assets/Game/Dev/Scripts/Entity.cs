@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CardGame.Components;
 using CardGame.Systems;
@@ -6,6 +7,7 @@ using CardGame.World;
 using RunTogether.Extensions;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 
 namespace CardGame{
 
@@ -15,46 +17,96 @@ namespace CardGame{
     [Inject] public BoardManager     InjectedBoardManager{get; private set;}
     [Inject] public DeckManager      DeckManager         {get; private set;}
 
-    public    HandManager HandManager{get; private set;} // holding cards
-    protected Plate       Plate      {get; private set;}
+    Plate plate;
+
+    public HandManager HandManager{get; private set;} // holding cards
+
+    public int Score     {get; private set;}
+    public int SnapCount {get; private set;}
+    public int AceCount  {get; private set;}
+    public int CardCount {get; private set;}
+    public int ClubsCount{get; private set;}
 
     public virtual void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot){
       HandManager = new(this, cardHoldTransforms);
 
       SpawnPlate(platePrefab, plateRoot);
+
+      void SpawnPlate(GameObject prefab, Transform root){
+        plate = Object.Instantiate(prefab, root).GetComponent<Plate>();
+        plate.Init(this, root);
+      }
     }
 
     public virtual void OnToggle(bool to){
       if (to){
-        TurnHandler.OnNewTurnStart          += OnNewTurnStart;
-        TurnHandler.OnGameStart             += EnablePlate;
-        TurnHandler.OnGameEnded             += DisablePlate;
-        InjectedBoardManager.OnScoreChanged += Plate.SetScoreText;
+        TurnHandler.OnGameStart       += GameStarted;
+        TurnHandler.OnNewTurnStart    += OnNewTurnStart;
+        TurnHandler.OnGameEnded       += GameEnded;
+        CanvasController.OnQuitInGame += GameQuit;
       }
       else{
-        TurnHandler.OnNewTurnStart          -= OnNewTurnStart;
-        TurnHandler.OnGameStart             -= EnablePlate;
-        TurnHandler.OnGameEnded             -= DisablePlate;
-        InjectedBoardManager.OnScoreChanged -= Plate.SetScoreText;
+        TurnHandler.OnGameStart    -= GameStarted;
+        TurnHandler.OnNewTurnStart -= OnNewTurnStart;
+        TurnHandler.OnGameEnded    -= GameEnded;
+        CanvasController.OnQuitInGame -= GameQuit;
       }
 
-      void EnablePlate(){
-        Plate.gameObject.Toggle(true);
+      void GameStarted(int totalBet){
+        plate.gameObject.Toggle(true);
+        plate.SeTotalBetText(totalBet);
+        SetScore(default);
+        SetSnapCount(default);
+        SetAceCount(default);
+        SetCardCount(default);
+        SetClubsCount(default);
       }
-      void DisablePlate(object sender, TurnHandler.ResultEventArgs e){
-        Plate.gameObject.Toggle(false);
+      void GameEnded(object sender, TurnHandler.ResultEventArgs e){
+        plate.gameObject.Toggle(false);
+      }
+      
+      void GameQuit(){
+        plate.gameObject.Toggle(false);
       }
 
-    }
-
-    void SpawnPlate(GameObject prefab, Transform root){
-      Plate = Object.Instantiate(prefab, root).GetComponent<Plate>();
-      Plate.Init(this, root);
     }
 
     protected virtual void OnNewTurnStart(Entity entity){
-      Plate.ToggleYourTurn(entity == this);
+      plate.ToggleYourTurn(entity == this);
     }
+
+  #region Set
+    void SetScore(int to){
+      Score = to;
+      plate.SetScoreText(Score, this);
+    }
+
+    void SetSnapCount(int to)  => SnapCount = to;
+    void SetAceCount(int to)   => AceCount = to;
+    void SetCardCount(int to)  => CardCount = to;
+    void SetClubsCount(int to) => ClubsCount = to;
+
+    public void UpdateScore(int delta){
+      Score += delta;
+      plate.SetScoreText(Score, this);
+    }
+
+    public void UpdateSnapCount(int delta){
+      SnapCount += delta;
+    }
+
+    public void UpdateAceCount(int delta){
+      AceCount += delta;
+    }
+
+    public void UpdateCardCount(int delta){
+      CardCount += delta;
+    }
+
+    public void UpdateClubsCount(int delta){
+      ClubsCount += delta;
+    }
+  #endregion
 
   }
 

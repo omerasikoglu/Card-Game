@@ -7,8 +7,6 @@ namespace CardGame.Systems{
 
   public enum SoundType : byte{
     ButtonClickSfx,
-    InputFailSfx,
-    SnapSfx,
     LostSfx,
     WinSfx,
   }
@@ -21,6 +19,7 @@ namespace CardGame.Systems{
     public                  SoundType SoundType;
     [Range(0f, 1f)]  public float     Volume;
     [Range(.1f, 3f)] public float     Pitch;
+    public bool PlayOnAwake;
   }
 
   public class AudioManager : MonoBehaviour{
@@ -28,10 +27,11 @@ namespace CardGame.Systems{
 
     void Awake(){
       foreach (Sound s in Sounds){
-        s.Source             = gameObject.GetOrAdd<AudioSource>();
+        s.Source             = gameObject.AddComponent<AudioSource>();
         s.Source.clip        = s.AudioClip;
         s.Source.volume      = s.Volume;
         s.Source.pitch       = s.Pitch;
+        s.Source.playOnAwake = s.PlayOnAwake;
       }
     }
 

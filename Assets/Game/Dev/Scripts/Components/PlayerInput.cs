@@ -112,11 +112,13 @@ namespace CardGame{
     }
 
     void Logic(){
+      if(targetCardHit.IsInDeck)  return;
       if (boardManager.IsFourCardPilesRemoved()){
         if (targetCardHit.AttachedCardPile != null) return;
         // targetCardHit.OnInteractJustPerformed();
         boardManager.AddCardToOneCardPile(targetCardHit);
         player.HandManager.RemoveCardFromYourHand(targetCardHit);
+        OnToggle(false);
       }
       else{ // there is more than 1 card pile
         if (boardManager.IsBoardCard(targetCardHit)){
@@ -126,6 +128,7 @@ namespace CardGame{
           if (boardManager.ChosenBoardPile != null){ // you picked board card before
             boardManager.AddCardToPile(boardManager.ChosenBoardPile, targetCardHit);
             player.HandManager.RemoveCardFromYourHand(targetCardHit);
+            OnToggle(false);
           }
           else{ // you need pick board card first
             DOTween.Complete(Keys.Tween.Card);

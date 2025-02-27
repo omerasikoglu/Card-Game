@@ -19,11 +19,14 @@ namespace CardGame.World{
     public CardType CardType  {get; private set;}
     public int      CardNumber{get; private set;} // 1,2.. 12, 13
     public int      CardPoint {get; private set;}
+    public bool     IsInDeck  {get; private set;} = true;
+
   #endregion
 
     void Init(){
       transform.GetFirstChild<Image>(includeGrandChild: true).sprite = CardSprite;
       transform.GetFirstChild<TMP_Text>(includeGrandChild: true).SetText(CardText);
+      IsInDeck = true;
     }
 
     public class Builder{
@@ -84,7 +87,7 @@ namespace CardGame.World{
 
   #region Implements
     public bool IsInteractEnable(){
-      return true;
+      return !IsInDeck;
     }
 
     public void OnInteractJustPerformed(){
@@ -95,6 +98,10 @@ namespace CardGame.World{
 
     public void SetAttachedCardPile(CardPile attachedCardPile){
       AttachedCardPile = attachedCardPile;
+    }
+
+    public void SetIsInDeck(bool to){
+      IsInDeck = to;
     }
 
   }
