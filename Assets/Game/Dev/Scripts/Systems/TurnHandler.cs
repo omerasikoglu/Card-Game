@@ -5,14 +5,13 @@ using UnityEngine;
 using VContainer;
 
 namespace CardGame.Systems{
-
-  public class TurnManager{
+  public class TurnHandler{
+    public event Action         OnGameStart               = delegate{ };
     public event Action         OnCardDistributionStart = delegate{ };
     public event Action<Entity> OnNewTurnStart             = delegate{ };
 
     // [Inject] readonly Player      player;
     // [Inject] readonly Opponent    opponent;
-    // [Inject] readonly DeckManager deckManager;
 
     List<Entity> entities; // AI included
 
@@ -25,7 +24,8 @@ namespace CardGame.Systems{
 
   #region States
     public void StartGame(){
-      // deckManager.CreateDeck();
+      OnGameStart.Invoke();
+      
     }
 
     public void DistributeCards(){

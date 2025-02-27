@@ -38,6 +38,8 @@ namespace CardGame.Systems{
         OnTotalLoseChanged.Invoke(value);
       }
     }
+
+    public int CurrentBet{get; private set;}
   #endregion
 
     public SaveLoadSystem(){
@@ -47,15 +49,16 @@ namespace CardGame.Systems{
     public void UpdateCurrency(int delta) => Currency += delta;
     public void IncreaseTotalWins()       => ++TotalWins;
     public void IncreaseTotalLosses()     => ++TotalLosses;
-
+    public void SetCurrentBet(int to)     => CurrentBet = to;
+    
     void Save(string key, int to){
       PlayerPrefs.SetInt(key, to);
     }
 
     void LoadGameData(){
-      Currency    = GetInt(Keys.IO.CURRENCY, Currency);
-      TotalWins   = GetInt(Keys.IO.WIN, TotalWins);
-      TotalLosses = GetInt(Keys.IO.LOST, TotalLosses);
+      Currency    = GetInt(Keys.IO.CURRENCY, Keys.IO.CURRENCY_DEFAULT);
+      TotalWins   = GetInt(Keys.IO.WIN, 0);
+      TotalLosses = GetInt(Keys.IO.LOST, 0);
 
       Debug.Log($" <color=cyan>{"game data pulled"}</color>");
     }

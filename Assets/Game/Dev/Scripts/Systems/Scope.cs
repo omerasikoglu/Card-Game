@@ -1,4 +1,5 @@
 using CardGame.UI;
+using CardGame.World;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using VContainer;
@@ -22,13 +23,15 @@ namespace CardGame.Systems{
       builder.RegisterComponentInHierarchy<GameManager>();
       builder.RegisterComponentInHierarchy<AudioManager>();
       builder.RegisterComponentInHierarchy<CanvasController>();
+      
+      builder.RegisterComponentInHierarchy<Plate>();
 
       builder.Register<Player>(Lifetime.Singleton);
       builder.Register<Opponent>(Lifetime.Singleton);
 
       builder.Register<DeckManager>(Lifetime.Singleton).WithParameter(cardPrefab).WithParameter(deckRoot);
       builder.Register<BoardManager>(Lifetime.Singleton).WithParameter(fourCardPileRoots).WithParameter(oneCardPileRoot);
-      builder.Register<TurnManager>(Lifetime.Singleton);
+      builder.Register<TurnHandler>(Lifetime.Singleton);
       builder.Register<SaveLoadSystem>(Lifetime.Singleton);
     }
 

@@ -17,7 +17,12 @@ namespace CardGame.UI{
 
     [Inject] readonly AudioManager   audioManager;
     [Inject] readonly SaveLoadSystem saveLoadSystem;
+    [Inject] readonly Player player;
 
+    public event Action OnGameStart  = delegate{ };
+    public event Action OnQuitInGame = delegate{ };
+
+  #region Members
     [Title(Keys.UI.Main)]
     [TabGroup(Keys.UI.Main)][SerializeField] Transform mainMenuPanel;
     [TabGroup(Keys.UI.Main)][SerializeField] Button createLobbyButton;
@@ -48,8 +53,7 @@ namespace CardGame.UI{
 
     [Title(Keys.UI.InGame)]
     [TabGroup(Keys.UI.InGame)][SerializeField] Transform inGamePanel;
-    [TabGroup(Keys.UI.InGame)][SerializeField] Button exitInGameToMainMenuButton;
-    [TabGroup(Keys.UI.InGame)][SerializeField] Button exitInGameToNewLobbyButton;
+    [TabGroup(Keys.UI.InGame)][SerializeField] Button returnToMainMenuInGameButton;
 
     [Title(Keys.UI.Info)]
     [TabGroup(Keys.UI.Info)][SerializeField] Transform playerInfoPanel;
@@ -58,20 +62,31 @@ namespace CardGame.UI{
     [TabGroup(Keys.UI.Info)][SerializeField] TMP_Text playerInfoLostCountText;
     [TabGroup(Keys.UI.Info)][SerializeField] Button   exitPlayerInfoButton;
 
+    [Title(Keys.UI.Warning)]
+    [TabGroup(Keys.UI.Warning)][SerializeField] Transform warningPanel;
+    [TabGroup(Keys.UI.Warning)][SerializeField] TMP_Text warningBetCurrencyText;
+    [TabGroup(Keys.UI.Warning)][SerializeField] Button   returnToGameButton;
+    [TabGroup(Keys.UI.Warning)][SerializeField] Button   exitToMainMenuWarningButton;
+
     Transform[] allPanels;
     Toggle[]    allToggles;
     Button[]    allButtons;
+    Button[]    mainMenuButtons,lobbyButtons;
 
     const float OPEN_DURATION = 0.4f;
+  #endregion
 
+  #region Core
     void Awake(){
-      allPanels = new[]{ mainMenuPanel, lobbyPanel, createTablePanel, inGamePanel, playerInfoPanel };
+      allPanels = new[]{ mainMenuPanel, lobbyPanel, createTablePanel, inGamePanel, playerInfoPanel, warningPanel };
       allButtons = new[]{
         createLobbyButton, exitGameButton, playerInfoButton, exitLobbyPanelButton, createTableButton, exitPlayerInfoButton,
-        createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton, exitInGameToMainMenuButton, exitInGameToNewLobbyButton,
-        exitTableButton
+        createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton, exitToMainMenuWarningButton, returnToGameButton,
+        exitTableButton, returnToMainMenuInGameButton
       };
-      allToggles = new[]{ twoPlayerToggle, fourPlayerToggle };
+      allToggles   = new[]{ twoPlayerToggle, fourPlayerToggle };
+      mainMenuButtons = new[]{ createLobbyButton, exitGameButton };
+      lobbyButtons = new[]{ exitLobbyPanelButton, createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton };
 
       allButtons.ForEach(o => AddDefaultTriggers(o.transform));
       allToggles.ForEach(o => AddDefaultTriggers(o.transform));
@@ -80,13 +95,9 @@ namespace CardGame.UI{
     }
 
     void Start(){
-      ResetAllPanels();
-
-      void ResetAllPanels(){
-        allPanels.ForEach(o => o.Toggle(false));
-        mainMenuPanel.Toggle(true);
-      }
+      SwitchPanel(mainMenuPanel);
     }
+  #endregion
 
     void AddDefaultTriggers(Transform uiElement){
       EventTrigger eventTrigger = uiElement.gameObject.GetOrAdd<EventTrigger>();
@@ -112,6 +123,10 @@ namespace CardGame.UI{
       }
 
       void ButtonClicked(BaseEventData args){
+        if (uiElement.TryGetComponent(out Button button)){
+          if (!button.interactable) return;
+        }
+
         audioManager.PlaySound(SoundType.ButtonClickSfx);
       }
     }
@@ -133,15 +148,20 @@ namespace CardGame.UI{
       fourPlayerToggle.onValueChanged.AddListener(FourPlayerTogglePressed);
       createTableButton.onClick.AddListener(CreateGameTableButtonPressed);
       // InGame
+      returnToMainMenuInGameButton.onClick.AddListener(ReturnToMainMenuInGameButtonPressed);
+      // Player Info
       exitPlayerInfoButton.onClick.AddListener(ExitPlayerPanelButtonPressed);
+      // Warning
+      returnToGameButton.onClick.AddListener(ReturnToGameWarningButtonPressed);
+      exitToMainMenuWarningButton.onClick.AddListener(ExitToMainMenuWarningButtonPressed);
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Main Menu 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
       void CreateLobbyButtonPressed(){
         CompleteTweens();
-        createLobbyButton.transform.localScale = Vector3.one;
+        mainMenuButtons.ForEach(o => o.transform.localScale = Vector3.one);
         mainMenuPanel.Toggle(false);
 
-        playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString());
+        playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
 
         lobbyPanel.Toggle(true);
       }
@@ -153,10 +173,9 @@ namespace CardGame.UI{
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Lobby 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
       void PlayerInfoButtonPressed(){
         CompleteTweens();
-        lobbyPanel.Toggle(false);
+        lobbyButtons.ForEach(o => o.interactable = false);
 
         playerInfoCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString());
-        ;
         playerInfoWinCountText.SetText(saveLoadSystem.Load(Keys.IO.WIN).ToString());
         playerInfoLostCountText.SetText(saveLoadSystem.Load(Keys.IO.LOST).ToString());
 
@@ -173,6 +192,7 @@ namespace CardGame.UI{
         CompleteTweens();
         lobbyPanel.Toggle(false);
         createTablePanel.Toggle(true);
+        betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
         maxBetText.SetText(Keys.Bet.NEWBIES.Max.ToString(CultureInfo.CurrentCulture));
         currentBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
@@ -184,6 +204,7 @@ namespace CardGame.UI{
         CompleteTweens();
         lobbyPanel.Toggle(false);
         createTablePanel.Toggle(true);
+        betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
         maxBetText.SetText(Keys.Bet.ROOKIES.Max.ToString(CultureInfo.CurrentCulture));
         currentBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
@@ -194,6 +215,7 @@ namespace CardGame.UI{
         CompleteTweens();
         lobbyPanel.Toggle(false);
         createTablePanel.Toggle(true);
+        betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
         maxBetText.SetText(Keys.Bet.NOBLES.Max.ToString(CultureInfo.CurrentCulture));
         currentBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
@@ -201,9 +223,6 @@ namespace CardGame.UI{
       }
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Table 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-      void CreateGameTableButtonPressed(){
-        CompleteTweens();
-      }
 
       void ExitTableButtonPressed(){
         CompleteTweens();
@@ -217,7 +236,7 @@ namespace CardGame.UI{
 
         var span          = max - min;
         var rawResult     = value * span + min;
-        var roundedResult = rawResult.Ceil10();
+        var roundedResult = rawResult.Ceil50();
         currentBetText.SetText(roundedResult.ToString("C0"));
       }
 
@@ -229,14 +248,58 @@ namespace CardGame.UI{
         twoPlayerToggle.isOn = !to;
       }
 
-      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 InGame 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-      void ExitPlayerPanelButtonPressed(){
+      void CreateGameTableButtonPressed(){
         CompleteTweens();
+        saveLoadSystem.SetCurrentBet(currentBetText.text.ConvertToInt());
+        createTablePanel.Toggle(false);
+        inGamePanel.Toggle(true);
+        OnGameStart.Invoke();
       }
 
-      void CompleteTweens(){
-        DOTween.Complete(Keys.Tween.UI);
+      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 InGame 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+      void ReturnToMainMenuInGameButtonPressed(){
+        CompleteTweens();
+        inGamePanel.Toggle(false);
+        warningPanel.Toggle(true);
+        warningBetCurrencyText.SetText(saveLoadSystem.CurrentBet.ToString());
       }
+
+      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Player Info 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+      void ExitPlayerPanelButtonPressed(){
+        CompleteTweens();
+        playerInfoPanel.Toggle(false);
+        lobbyButtons.ForEach(o => o.interactable = true);
+        returnToMainMenuInGameButton.interactable = true;
+        player.PlayerInput.OnToggle(true);
+      }
+      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Warning 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+
+      void ReturnToGameWarningButtonPressed(){
+        CompleteTweens();
+        warningPanel.Toggle(false);
+        inGamePanel.Toggle(true);
+      }
+
+      void ExitToMainMenuWarningButtonPressed(){
+        CompleteTweens();
+        warningPanel.Toggle(false);
+        mainMenuPanel.Toggle(true);
+        OnQuitInGame.Invoke();
+      }
+
+    }
+
+    void SwitchPanel(Transform to){
+      allPanels.ForEach(o => o.Toggle(to == o));
+    }
+
+    public void OpenPlayerInfoPanel(){
+      returnToMainMenuInGameButton.interactable = false;
+      playerInfoPanel.Toggle(true);
+    }
+
+    void CompleteTweens(){
+      DOTween.Complete(Keys.Tween.UI);
     }
 
     float DelayedOutElastic(float time, float duration, float overshootOrAmplitude, float period){

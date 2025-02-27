@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using CardGame.Systems;
 using CardGame.Utils;
@@ -19,6 +20,8 @@ namespace CardGame{
     readonly InputActions inputActions;
     readonly RaycastHit[] interactableHits = new RaycastHit[10];
 
+    Plate previousPlateHit;
+
     const float MAX_RAY_DISTANCE = 3f;
   #endregion
 
@@ -32,7 +35,7 @@ namespace CardGame{
       mainCam      = Camera.main;
 
       inputActions = new();
-      inputActions.Enable();
+      inputActions.Disable();
     }
 
     public void OnToggle(bool to){
@@ -57,14 +60,49 @@ namespace CardGame{
 
       if (interactableHitCount <= 0) return;
 
-      var results = interactableHits.Take(interactableHitCount);
-      targetCardHit = results.Select(
-        hit => hit.collider.GetComponent<Card>()).FirstOrDefault(draggable => draggable != null);
+      var results = interactableHits.Take(interactableHitCount).ToList();
 
-      if (targetCardHit is null) return;
+      if (CheckPlateHit(results)) return;
 
-      if (FirstTouch.WasPerformedThisFrame()){
-        Logic();
+      CheckCardHits(results);
+
+      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+
+      bool CheckPlateHit(IEnumerable<RaycastHit> results){
+        var newPlateHit = results.Select(
+          hit => hit.collider.GetComponent<Plate>()).FirstOrDefault(o => o != null);
+
+        bool wasRayEnterThisFrame   = newPlateHit != null && previousPlateHit == null;
+        bool wasRayExitThisFrame    = newPlateHit == null && previousPlateHit != null;
+        bool wasPlateTouchPerformed = previousPlateHit != null && newPlateHit != null && FirstTouch.WasPerformedThisFrame();
+
+        if (wasRayEnterThisFrame){
+          newPlateHit.OnRayEnter();
+          previousPlateHit = newPlateHit;
+          return true;
+        }
+
+        if (wasRayExitThisFrame){
+          previousPlateHit.OnRayExit();
+          previousPlateHit = newPlateHit;
+          return true;
+        }
+
+        if (wasPlateTouchPerformed){
+          previousPlateHit.OnInteractJustPerformed();
+          return true;
+        }
+
+        return false;
+      }
+
+      void CheckCardHits(IEnumerable<RaycastHit> results){
+        targetCardHit = results.Select(hit => hit.collider.GetComponent<Card>()).FirstOrDefault(o => o != null);
+        if (targetCardHit is null) return;
+
+        if (FirstTouch.WasPerformedThisFrame()){
+          Logic();
+        }
       }
     }
 

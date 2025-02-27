@@ -4,29 +4,32 @@ using UnityEngine;
 namespace CardGame{
 
   public class Player : Entity{
-    PlayerInput playerInput;
+    public PlayerInput PlayerInput{get; private set;}
 
   #region Core
     public override void Init(IReadOnlyList<Transform> cardHoldTransforms){
       base.Init(cardHoldTransforms);
-      playerInput = new(this);
+      PlayerInput = new(this);
 
     }
 
-    public override void OnToggle(bool to){
-      base.OnToggle(to);
-      playerInput.OnToggle(to);
-    }
+    public void OpenInput()  => PlayerInput.OnToggle(true);
+    public void CloseInput() => PlayerInput.OnToggle(false);
 
-    protected override void OnNewTurnStart(Entity ctx){ 
+    // public void OnToggle(bool to){
+    //   base.OnToggle(to);
+    //   PlayerInput.OnToggle(to);
+    // }
+
+    protected override void OnNewTurnStart(Entity ctx){
       // could be oppenents' turn
-      
+
       bool isYourTurnStarted = ctx == this;
-      playerInput.OnToggle(isYourTurnStarted);
+      PlayerInput.OnToggle(isYourTurnStarted);
     }
 
     public void Update(){
-      playerInput.Update();
+      PlayerInput.Update();
     }
   #endregion
 

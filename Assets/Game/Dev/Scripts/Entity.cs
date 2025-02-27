@@ -9,7 +9,7 @@ namespace CardGame{
   public abstract class Entity{
     [Inject] public BoardManager BoardManager{get; private set;}
     [Inject] public DeckManager  DeckManager {get; private set;}
-    [Inject] public TurnManager  TurnManager {get; private set;}
+    [Inject] public TurnHandler  turnHandler {get; private set;}
 
     public HandManager HandManager{get; private set;} // holding cards
 
@@ -19,10 +19,10 @@ namespace CardGame{
 
     public virtual void OnToggle(bool to){
       if (to){
-        TurnManager.OnNewTurnStart += OnNewTurnStart;
+        turnHandler.OnNewTurnStart += OnNewTurnStart;
       }
       else{
-        TurnManager.OnNewTurnStart -= OnNewTurnStart;
+        turnHandler.OnNewTurnStart -= OnNewTurnStart;
       }
     }
 

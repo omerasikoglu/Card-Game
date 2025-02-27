@@ -1,18 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CardGame.Utils;
 using CardGame.World;
+using Cysharp.Threading.Tasks;
 using RunTogether.Extensions;
 using UnityEngine;
+using VContainer;
 using Random = System.Random;
 
 namespace CardGame.Systems{
 
   public class DeckManager{
 
+    [Inject] readonly TurnHandler turnHandler;
+
     Stack<Card> deck;
     List<Card>  temporaryDeck;
-    
+
     readonly GameObject   cardPrefab;
     readonly Transform    deckRoot;
     readonly List<Player> player;
@@ -27,15 +32,27 @@ namespace CardGame.Systems{
       this.deckRoot   = deckRoot;
 
       deck      = new();
-      deckEuler = new(-90f, 0f, -90f);
+      deckEuler = Keys.Euler.Deck;
     }
 
-    public void CreateDeck(){
-      var maxTypeCount = Enum.GetNames(typeof(CardType)).Length;
+    public void Start(){
+      turnHandler.OnGameStart += CreateDeck;
+    }
 
+    public void OnToggle(bool to){
+      if (!to){
+        turnHandler.OnGameStart -= CreateDeck;
+      }
+    }
+
+    public async void CreateDeck(){
+      var maxTypeCount            = Enum.GetNames(typeof(CardType)).Length;
+      var oneCardCreationDuration = 0.01f;
+      
       for (int i = 1; i <= MAX_CARD_NUMBER; i++){
         for (int j = 0; j < maxTypeCount; j++){
           CreateCard(i, (CardType)j);
+          await UniTask.WaitForSeconds(oneCardCreationDuration);
         }
       }
 
@@ -71,11 +88,9 @@ namespace CardGame.Systems{
 
       return card;
     }
-    
-    public void OpenCardToTable(){
-      
-    }
-    
+
+    public void OpenCardToTable(){ }
+
     public int GetDeckCount() => deck.Count;
 
     public Stack<Card> GetDeck() => deck;
