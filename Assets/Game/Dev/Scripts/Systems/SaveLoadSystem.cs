@@ -1,4 +1,3 @@
-using System;
 using CardGame.Utils;
 using UnityEngine;
 using VContainer;
@@ -8,10 +7,6 @@ namespace CardGame.Systems{
   public class SaveLoadSystem{
     [Inject] readonly TurnHandler turnHandler;
 
-    public event Action<int> OnCurrencyUpdated  = delegate{ };
-    public event Action<int> OnTotalWinChanged  = delegate{ };
-    public event Action<int> OnTotalLoseChanged = delegate{ };
-
   #region Members
     int currency, totalWins, totalLosses;
 
@@ -20,7 +15,6 @@ namespace CardGame.Systems{
       set{
         currency = value;
         Save(Keys.IO.CURRENCY, value);
-        OnCurrencyUpdated.Invoke(value);
       }
     }
 
@@ -29,7 +23,6 @@ namespace CardGame.Systems{
       set{
         totalWins = value;
         Save(Keys.IO.WIN, value);
-        OnTotalWinChanged.Invoke(value);
       }
     }
 
@@ -38,7 +31,6 @@ namespace CardGame.Systems{
       set{
         totalLosses = value;
         Save(Keys.IO.LOST, value);
-        OnTotalLoseChanged.Invoke(value);
       }
     }
 

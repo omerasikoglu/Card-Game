@@ -144,7 +144,7 @@ namespace CardGame.UI{
           winResultText.SetText(resultText);
           winTotalPointText.SetText("Score: " + e.Score);
           winPanel.Toggle(true);
-          
+
           audioManager.PlaySound(SoundType.WinSfx);
         }
 
@@ -164,7 +164,7 @@ namespace CardGame.UI{
           lostResultText.SetText(resultText);
           lostTotalPointText.SetText("Score: " + e.Score);
           lostPanel.Toggle(true);
-          
+
           audioManager.PlaySound(SoundType.LostSfx);
         }
       }
@@ -241,10 +241,10 @@ namespace CardGame.UI{
         mainMenuPanel.Toggle(false);
 
         playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
-        
+
         createNewbieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NEWBIES.Min;
         createRookieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.ROOKIES.Min;
-        createNobleLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NOBLES.Min;
+        createNobleLobbyButton.interactable  = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NOBLES.Min;
 
         lobbyPanel.Toggle(true);
       }
@@ -277,7 +277,15 @@ namespace CardGame.UI{
         createTablePanel.Toggle(true);
         betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
-        maxBetText.SetText(Keys.Bet.NEWBIES.Max.ToString(CultureInfo.CurrentCulture));
+
+        var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
+        if (currentCurrency < Keys.Bet.NEWBIES.Max){
+          maxBetText.SetText(currentCurrency.ToString());
+        }
+        else{
+          maxBetText.SetText(Keys.Bet.NEWBIES.Max.ToString(CultureInfo.CurrentCulture));
+        }
+
         currentBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
         betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.NEWBIES.Min} - {Keys.Bet.NEWBIES.Max}");
 
@@ -289,7 +297,15 @@ namespace CardGame.UI{
         createTablePanel.Toggle(true);
         betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
-        maxBetText.SetText(Keys.Bet.ROOKIES.Max.ToString(CultureInfo.CurrentCulture));
+        
+        var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
+        if (currentCurrency < Keys.Bet.ROOKIES.Max){
+          maxBetText.SetText(currentCurrency.ToString());
+        }
+        else{
+          maxBetText.SetText(Keys.Bet.ROOKIES.Max.ToString(CultureInfo.CurrentCulture));
+        }
+        
         currentBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
         betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.ROOKIES.Min} - {Keys.Bet.ROOKIES.Max}");
       }
@@ -300,7 +316,15 @@ namespace CardGame.UI{
         createTablePanel.Toggle(true);
         betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
-        maxBetText.SetText(Keys.Bet.NOBLES.Max.ToString(CultureInfo.CurrentCulture));
+        
+        var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
+        if (currentCurrency < Keys.Bet.NOBLES.Max){
+          maxBetText.SetText(currentCurrency.ToString());
+        }
+        else{
+          maxBetText.SetText(Keys.Bet.NOBLES.Max.ToString(CultureInfo.CurrentCulture));
+        }
+        
         currentBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
         betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.NOBLES.Min} - {Keys.Bet.NOBLES.Max}");
       }
@@ -314,8 +338,14 @@ namespace CardGame.UI{
       }
 
       void BetScrolbarValueChanged(float value){
+        var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
+
         var min = minBetText.text.ConvertToInt();
         var max = maxBetText.text.ConvertToInt();
+
+        if (currentCurrency < max){
+          max = currentCurrency;
+        }
 
         var span          = max - min;
         var rawResult     = value * span + min;
@@ -336,7 +366,7 @@ namespace CardGame.UI{
         saveLoadSystem.SetCurrentBet(currentBetText.text.ConvertToInt());
         createTablePanel.Toggle(false);
         inGamePanel.Toggle(true);
-        
+
         saveLoadSystem.UpdateCurrency(-saveLoadSystem.CurrentBet);
         OnGameStart.Invoke();
       }
