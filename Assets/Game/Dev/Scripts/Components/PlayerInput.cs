@@ -90,6 +90,8 @@ namespace CardGame{
 
         if (wasPlateTouchPerformed){
           previousPlateHit.OnInteractJustPerformed();
+          player.PlayerInput.OnToggle(false);
+          player.CanvasController.OpenPlayerInfoPanel();
           return true;
         }
 
@@ -124,7 +126,7 @@ namespace CardGame{
           }
           else{ // you need pick board card first
             DOTween.Complete(Keys.Tween.Card);
-            boardManager.JumpTopBoardCards();
+            boardManager.AnimateJumpTopBoardCards();
             targetCardHit.transform.DOMoveY(targetCardHit.transform.position.y + 0.05f, 0.1f).SetLoops(4, LoopType.Yoyo).SetId(Keys.Tween.Card);
           }
 

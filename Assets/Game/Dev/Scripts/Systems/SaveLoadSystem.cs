@@ -50,6 +50,7 @@ namespace CardGame.Systems{
     public void IncreaseTotalWins()       => ++TotalWins;
     public void IncreaseTotalLosses()     => ++TotalLosses;
     public void SetCurrentBet(int to)     => CurrentBet = to;
+
     
     void Save(string key, int to){
       PlayerPrefs.SetInt(key, to);

@@ -17,10 +17,11 @@ namespace CardGame.UI{
 
     [Inject] readonly AudioManager   audioManager;
     [Inject] readonly SaveLoadSystem saveLoadSystem;
-    [Inject] readonly Player player;
+    [Inject] readonly TurnHandler    turnHandler;
 
     public event Action OnGameStart  = delegate{ };
     public event Action OnQuitInGame = delegate{ };
+    public event Action<bool> OnPlayerInputToggle = delegate{ };
 
   #region Members
     [Title(Keys.UI.Main)]
@@ -270,7 +271,7 @@ namespace CardGame.UI{
         playerInfoPanel.Toggle(false);
         lobbyButtons.ForEach(o => o.interactable = true);
         returnToMainMenuInGameButton.interactable = true;
-        player.PlayerInput.OnToggle(true);
+        OnPlayerInputToggle.Invoke(true);
       }
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Warning 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
@@ -296,6 +297,9 @@ namespace CardGame.UI{
     public void OpenPlayerInfoPanel(){
       returnToMainMenuInGameButton.interactable = false;
       playerInfoPanel.Toggle(true);
+      playerInfoCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString());
+      playerInfoWinCountText.SetText(saveLoadSystem.Load(Keys.IO.WIN).ToString());
+      playerInfoLostCountText.SetText(saveLoadSystem.Load(Keys.IO.LOST).ToString());
     }
 
     void CompleteTweens(){

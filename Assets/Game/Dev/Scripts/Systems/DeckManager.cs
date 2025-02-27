@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CardGame.Utils;
 using CardGame.World;
 using Cysharp.Threading.Tasks;
 using RunTogether.Extensions;
+using Sirenix.Utilities.Editor.Expressions;
 using UnityEngine;
 using VContainer;
 using Random = System.Random;
@@ -13,10 +15,15 @@ namespace CardGame.Systems{
 
   public class DeckManager{
 
+    public event Action OnDeckCreated = delegate{ };
+
     [Inject] readonly TurnHandler turnHandler;
 
+  #region Members
     Stack<Card> deck;
     List<Card>  temporaryDeck;
+
+    CancellationTokenSource deckCreateTokenSource;
 
     readonly GameObject   cardPrefab;
     readonly Transform    deckRoot;
@@ -27,6 +34,10 @@ namespace CardGame.Systems{
     const int   DECK_SIZE       = 52;
     const int   MAX_CARD_NUMBER = 13;
 
+    readonly int   maxTypeCount            = Enum.GetNames(typeof(CardType)).Length;
+    const    float oneCardCreationDuration = 0.01f;
+  #endregion
+
     public DeckManager(GameObject cardPrefab, Transform deckRoot){
       this.cardPrefab = cardPrefab;
       this.deckRoot   = deckRoot;
@@ -35,30 +46,37 @@ namespace CardGame.Systems{
       deckEuler = Keys.Euler.Deck;
     }
 
-    public void Start(){
-      turnHandler.OnGameStart += CreateDeck;
-    }
-
     public void OnToggle(bool to){
-      if (!to){
+      if (to){
+        turnHandler.OnGameStart += CreateDeck;
+      }
+      else{
         turnHandler.OnGameStart -= CreateDeck;
       }
     }
 
     public async void CreateDeck(){
-      var maxTypeCount            = Enum.GetNames(typeof(CardType)).Length;
-      var oneCardCreationDuration = 0.01f;
-      
+      ClearDeck();
+
       for (int i = 1; i <= MAX_CARD_NUMBER; i++){
         for (int j = 0; j < maxTypeCount; j++){
           CreateCard(i, (CardType)j);
-          await UniTask.WaitForSeconds(oneCardCreationDuration);
+          await UniTask.WaitForSeconds(oneCardCreationDuration,
+            cancellationToken: deckCreateTokenSource.Token);
         }
       }
 
       ShuffleDeck();
+      OnDeckCreated.Invoke();
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+
+      void ClearDeck(){
+        deck.ForEach(o => UnityEngine.Object.Destroy(o.gameObject));
+        deck.Clear();
+        deckCreateTokenSource?.Cancel();
+        deckCreateTokenSource = new CancellationTokenSource();
+      }
 
       void CreateCard(int cardNumber, CardType cardType){
         Card card = new Card.Builder().WithNumber(cardNumber).WithCardType(cardType).Build(cardPrefab);
@@ -94,6 +112,14 @@ namespace CardGame.Systems{
     public int GetDeckCount() => deck.Count;
 
     public Stack<Card> GetDeck() => deck;
+
+    public bool IsDeckEmpty(){
+      return deck.Count == 0;
+    }
+    
+    public bool IsDeckFull(){
+      return deck.Count == DECK_SIZE;
+    }
   }
 
 }

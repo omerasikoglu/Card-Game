@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardGame.Utils;
@@ -10,16 +11,29 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class BoardManager{
-
     [Inject] readonly DeckManager    deckManager;
     [Inject] readonly SaveLoadSystem saveLoadSystem;
 
+    public Action<bool> OnCardPlayed       = delegate{ }; // !: isDealerDraw, krupiye
+    public Action OnCardPilesCreated = delegate{ };
+
+    public event Action<int> OnScoreChanged = delegate{ };
+
+    int  score;
     bool isStartingBoardPilesRemoved;
 
     readonly List<CardPile> cardPiles;
     readonly CardPile       oneCardPile;
 
     public CardPile ChosenBoardPile{get; private set;} = null;
+
+    int Score{
+      get => score;
+      set{
+        score = value;
+        OnScoreChanged.Invoke(value);
+      }
+    }
 
     public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
       cardPiles   = new();
@@ -32,15 +46,26 @@ namespace CardGame.Systems{
       }
     }
 
+    public void OnToggle(bool to){
+      if (to){
+        deckManager.OnDeckCreated += AddOneCardToEachPiles;
+      }
+      else{
+        deckManager.OnDeckCreated -= AddOneCardToEachPiles;
+      }
+    }
+
     public async void AddOneCardToEachPiles(){
       isStartingBoardPilesRemoved = false;
 
       foreach (CardPile pile in cardPiles){
         var topDeckCard = deckManager.DrawCard();
         if (topDeckCard == null) return;
-        pile.AddCard(topDeckCard).Forget();
+        pile.AddCard(topDeckCard, true).Forget();
         await UniTask.WaitForSeconds(0.1f);
       }
+
+      OnCardPilesCreated.Invoke();
 
     }
 
@@ -52,11 +77,11 @@ namespace CardGame.Systems{
     }
 
     public void AddCardToOneCardPile(Card card){
-      oneCardPile.AddCard(card).Forget();
+      oneCardPile.AddCard(card, false).Forget();
     }
 
     public void AddCardToPile(CardPile cardPile, Card card){
-      cardPile.AddCard(card).Forget();
+      cardPile.AddCard(card, false).Forget();
       ClearChosenBoardPile();
     }
 
@@ -84,11 +109,11 @@ namespace CardGame.Systems{
     public bool IsFourCardPilesRemoved(){
       return isStartingBoardPilesRemoved;
     }
-  #endregion
 
     public bool IsBoardCard(Card card){
       return card.AttachedCardPile != null;
     }
+  #endregion
 
     public void SetChosenBoardPile(CardPile cardPile){
       ClearChosenBoardPile();
@@ -101,7 +126,7 @@ namespace CardGame.Systems{
       cardPiles.ForEach(o => o.ToggleGreenSphere(false));
     }
 
-    public void JumpTopBoardCards(){
+    public void AnimateJumpTopBoardCards(){
       DOTween.Complete(Keys.Tween.Card);
 
       foreach (var cardPile in cardPiles){
@@ -110,8 +135,10 @@ namespace CardGame.Systems{
       }
     }
 
-    public void GainPoint(int point){
-      saveLoadSystem.UpdateCurrency(point);
+    public void GainScorePoint(int score){
+      UpdateScore(score);
+
+      void UpdateScore(int delta) => Score += delta;
     }
 
     public IEnumerable<Card> GetBoardTopCards(){

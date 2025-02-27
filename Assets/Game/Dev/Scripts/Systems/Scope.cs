@@ -24,7 +24,7 @@ namespace CardGame.Systems{
       builder.RegisterComponentInHierarchy<AudioManager>();
       builder.RegisterComponentInHierarchy<CanvasController>();
       
-      builder.RegisterComponentInHierarchy<Plate>();
+      // builder.RegisterComponentInHierarchy<Plate>();
 
       builder.Register<Player>(Lifetime.Singleton);
       builder.Register<Opponent>(Lifetime.Singleton);

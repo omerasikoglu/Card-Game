@@ -31,7 +31,7 @@ namespace CardGame.Components{
     }
 
   #region Set
-    public void AddCardToYourHand(Entity entity){
+    public void AddCardToHand(){
       if (holdingCards.Count >= HOLDING_MAX_CARD_COUNT) return;
       var topDeckCard = entity.DeckManager.DrawCard();
       if (topDeckCard == null) return;
@@ -90,7 +90,8 @@ namespace CardGame.Components{
     }
 
     public List<Card> GetHoldingCards() => holdingCards;
-
+    
+    public int GetHoldingCardCount() => holdingCards.Count;
   }
 
 }

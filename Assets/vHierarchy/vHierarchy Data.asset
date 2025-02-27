@@ -29,7 +29,25 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1633151461-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-414967382-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1714065636-0
-        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-237682516-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1921297497-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-322860990-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1917803923-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-357786341-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1379423680-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1957868624-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1003193866-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-2145851747-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-735790524-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-324171173-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-401554089-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-511957286-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-578888805-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-167353849-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-2011789166-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1686041278-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-355715105-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-479026672-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1423158713-0
         values:
         - colorIndex: 0
           iconNameOrGuid: Favorite
@@ -53,5 +71,41 @@ MonoBehaviour:
           iconNameOrGuid: AudioClip Icon
         - colorIndex: 0
           iconNameOrGuid: Canvas Icon
-        - colorIndex: 3
-          iconNameOrGuid: 
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon

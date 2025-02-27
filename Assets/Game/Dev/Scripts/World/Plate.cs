@@ -1,8 +1,8 @@
-using System;
 using CardGame.UI;
 using CardGame.Utils;
 using DG.Tweening;
 using RunTogether.Extensions;
+using TMPro;
 using UnityEngine;
 using VContainer;
 
@@ -11,20 +11,27 @@ namespace CardGame.World{
   [SelectionBase]
   public class Plate : MonoBehaviour, IClickInInteract, IRayInteract{
 
-    [Inject] readonly CanvasController canvasController;
-    [Inject] readonly Player player;
+    [SerializeField] TMP_Text scoreText;
+    [SerializeField] TMP_Text playerNameText;
 
     MeshRenderer meshRenderer;
-    Vector3     originalScale;
+    Tween        scaleUpTween;
+    Vector3      originalScale;
 
     const float scaleMultiplier = 1.1f;
     const float duration        = 0.1f;
-    
-    Tween scaleUpTween;
 
     void Awake(){
-      meshRenderer = transform.GetFirstChild<MeshRenderer>();
+      meshRenderer  = transform.GetFirstChild<MeshRenderer>();
       originalScale = meshRenderer.transform.localScale;
+    }
+
+    public void SetPlayerName(string name){
+      playerNameText.SetText(name);
+    }
+    
+    public void SetScoreText(int score){
+      scoreText.SetText(score.ToString("C1"));
     }
 
   #region Implements
@@ -34,21 +41,20 @@ namespace CardGame.World{
 
     public void OnRayEnter(){
       DOTween.Kill(Keys.Tween.Plate);
-      meshRenderer.transform.DOScale( originalScale * scaleMultiplier, duration).SetId(Keys.Tween.Plate);
+      meshRenderer.transform.DOScale(originalScale * scaleMultiplier, duration).SetId(Keys.Tween.Plate);
     }
 
     public void OnRayExit(){
       DOTween.Complete(Keys.Tween.Plate);
-      meshRenderer.transform.DOScale( originalScale, duration).SetId(Keys.Tween.Plate);
+      meshRenderer.transform.DOScale(originalScale, duration).SetId(Keys.Tween.Plate);
     }
 
     public void OnInteractJustPerformed(){
-      canvasController.OpenPlayerInfoPanel();
       DOTween.Kill(Keys.Tween.Plate);
-      transform.localScale = originalScale;
-      player.PlayerInput.OnToggle(false);
+      meshRenderer.transform.localScale = originalScale;
     }
+  #endregion
+
   }
-#endregion
 
 }

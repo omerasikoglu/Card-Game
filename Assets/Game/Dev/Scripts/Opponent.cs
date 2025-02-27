@@ -8,14 +8,19 @@ using UnityEngine;
 namespace CardGame{
 
   public class Opponent : Entity{
+
+    const float moveCalculateDuration = 0.6f; 
+    
     protected override void OnNewTurnStart(Entity ctx){
-      if (ctx != this) return;
+      bool isYourTurnStarted = ctx == this;
+      if(!isYourTurnStarted) return;
+      
       PlayBestCard();
 
     }
 
     async void PlayBestCard(){
-      await UniTask.WaitForSeconds(1f);
+      await UniTask.WaitForSeconds(moveCalculateDuration);
 
       var holdingCards = HandManager.GetHoldingCards();
       var boardCards   = BoardManager.GetBoardTopCards();

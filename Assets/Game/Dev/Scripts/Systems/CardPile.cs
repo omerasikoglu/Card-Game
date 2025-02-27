@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CardGame.Utils;
@@ -6,11 +7,13 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RunTogether.Extensions;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CardGame.Systems{
 
   public class CardPile{
 
+    
     readonly BoardManager boardManager;
     readonly Stack<Card>  cards;
     readonly Transform    root;
@@ -30,7 +33,7 @@ namespace CardGame.Systems{
       cardPileCardEuler = new(45f, 0f, 0f);
     }
 
-    public async UniTask AddCard(Card card){
+    public async UniTask AddCard(Card card, bool isDealerDraw){
       card.SetAttachedCardPile(this);
       card.transform.SetParent(root);
       cards.Push(card);
@@ -43,7 +46,8 @@ namespace CardGame.Systems{
       await UniTask.WaitUntil(() => card.transform.position == endPosition);
 
       CompareTopTwoCards();
-    }
+      boardManager.OnCardPlayed.Invoke(isDealerDraw);
+  }
 
     void CompareTopTwoCards(){
       if (cards.Count < 2) return;
@@ -62,7 +66,7 @@ namespace CardGame.Systems{
 
         point += cards.Sum(o => o.CardPoint);
 
-        boardManager.GainPoint(point);
+        boardManager.GainScorePoint(point);
 
         foreach (Card card in cards){
           await PopCard(card);
