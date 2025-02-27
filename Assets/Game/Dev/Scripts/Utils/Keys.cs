@@ -53,9 +53,11 @@ namespace CardGame.Utils{
       public const string Info    = "Player Info";
       public const string Warning = "Warning";
     }
-    
+
     public struct Euler{
-      public static readonly Vector3 Deck = new(-90f, 0f, -90f);
+      public static readonly Vector3 Deck     = new(-90f, 0f, -90f);
+      public static readonly Vector3 CardPile = new(45f, 0f, 0f);
+
     }
 
     public struct Bet{

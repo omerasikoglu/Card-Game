@@ -13,11 +13,12 @@ namespace CardGame.Systems{
   public class BoardManager{
     [Inject] readonly DeckManager    deckManager;
     [Inject] readonly SaveLoadSystem saveLoadSystem;
+    [Inject] readonly TurnHandler    turnHandler;
 
     public Action<bool> OnCardPlayed       = delegate{ }; // !: isDealerDraw, krupiye
-    public Action OnCardPilesCreated = delegate{ };
+    public Action       OnCardPilesCreated = delegate{ };
 
-    public event Action<int> OnScoreChanged = delegate{ };
+    public event Action<int, Entity> OnScoreChanged = delegate{ };
 
     int  score;
     bool isStartingBoardPilesRemoved;
@@ -31,7 +32,7 @@ namespace CardGame.Systems{
       get => score;
       set{
         score = value;
-        OnScoreChanged.Invoke(value);
+        OnScoreChanged.Invoke(value, turnHandler.GetActiveEntity());
       }
     }
 

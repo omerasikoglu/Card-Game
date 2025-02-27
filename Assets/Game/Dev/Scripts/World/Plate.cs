@@ -18,6 +18,8 @@ namespace CardGame.World{
     Tween        scaleUpTween;
     Vector3      originalScale;
 
+    Entity owner;
+    
     const float scaleMultiplier = 1.1f;
     const float duration        = 0.1f;
 
@@ -26,12 +28,22 @@ namespace CardGame.World{
       originalScale = meshRenderer.transform.localScale;
     }
 
-    public void SetPlayerName(string name){
-      playerNameText.SetText(name);
+    public void Init(Entity entity, Transform root){
+      SetPlayerName(entity.ToString());
+      
+      owner = entity;
+      transform.position = root.position;
+      transform.rotation = root.rotation;
+      gameObject.Toggle(false);
+      
+      void SetPlayerName(string name){
+        playerNameText.SetText(name);
+      }
     }
-    
-    public void SetScoreText(int score){
-      scoreText.SetText(score.ToString("C1"));
+
+    public void SetScoreText(int score, Entity entity){
+      if(entity != owner) return;
+      scoreText.SetText(score.ToString("C0"));
     }
 
   #region Implements

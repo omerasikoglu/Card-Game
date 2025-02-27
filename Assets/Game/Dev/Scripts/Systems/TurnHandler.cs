@@ -58,7 +58,7 @@ namespace CardGame.Systems{
           await UniTask.WaitForSeconds(duration);
         }
 
-        OnNewTurnStarted();
+        NewTurnStarted();
 
         async void DistributeOneCardToEveryone(){
           entities[0].HandManager.AddCardToHand();
@@ -68,10 +68,8 @@ namespace CardGame.Systems{
         }
       }
 
-      void CheckAllHandsAreEmpty(bool isAutoPlay){
-        if(isAutoPlay) return;
-        
-        if (deckManager.IsDeckFull()) return;
+      void CheckAllHandsAreEmpty(bool isDealerDraw){
+        if(isDealerDraw) return;
         bool isAllHandsEmpty = entities.All(o => o.HandManager.GetHoldingCardCount() == 0);
         bool isDeckEmpty     = deckManager.IsDeckEmpty();
 
@@ -81,9 +79,12 @@ namespace CardGame.Systems{
         else if (isAllHandsEmpty && !isDeckEmpty){
           DistributeCards();
         }
+        else{
+          NewTurnStarted();
+        }
       }
       
-      void OnNewTurnStarted(){
+      void NewTurnStarted(){
 
         if (currentEntity == null){ // first turn
           currentEntity = entities[0];
@@ -97,6 +98,10 @@ namespace CardGame.Systems{
         Debug.Log($"currentEntity: <color=green>{currentEntity}</color>");
         OnNewTurnStart.Invoke(currentEntity);
       }
+    }
+
+    public Entity GetActiveEntity(){
+      return currentEntity; // returns which player's turn
     }
   }
 

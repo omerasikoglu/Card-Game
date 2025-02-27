@@ -13,11 +13,9 @@ namespace CardGame.Systems{
 
   public class CardPile{
 
-    
     readonly BoardManager boardManager;
     readonly Stack<Card>  cards;
     readonly Transform    root;
-    readonly Vector3      cardPileCardEuler;
     readonly Transform    greenSphere;
 
     const float deckToBoardDuration = 0.2f;
@@ -29,8 +27,6 @@ namespace CardGame.Systems{
       cards             = new();
 
       greenSphere = root.GetFirstChild<SphereCollider>().transform;
-
-      cardPileCardEuler = new(45f, 0f, 0f);
     }
 
     public async UniTask AddCard(Card card, bool isDealerDraw){
@@ -41,61 +37,57 @@ namespace CardGame.Systems{
 
       DOTween.Complete(Keys.Tween.Card);
       card.transform.DOMove(endPosition, deckToBoardDuration).SetId(Keys.Tween.Card);
-      card.transform.DORotate(cardPileCardEuler, deckToBoardDuration).SetId(Keys.Tween.Card);
+      card.transform.DORotate(Keys.Euler.CardPile, deckToBoardDuration).SetId(Keys.Tween.Card);
 
       await UniTask.WaitUntil(() => card.transform.position == endPosition);
 
       CompareTopTwoCards();
-      boardManager.OnCardPlayed.Invoke(isDealerDraw);
-  }
-
-    void CompareTopTwoCards(){
-      if (cards.Count < 2) return;
-
-      Card topCard  = cards.Peek();
-      Card nextCard = cards.ElementAt(1);
-
-      if (topCard.CardNumber == nextCard.CardNumber){
-        GainPile();
-      }
-
-      async void GainPile(){
-        var  point        = 0;
-        bool isSnap       = cards.Count == 2;
-        if (isSnap) point += Keys.Point.SNAP;
-
-        point += cards.Sum(o => o.CardPoint);
-
-        boardManager.GainScorePoint(point);
-
-        foreach (Card card in cards){
-          await PopCard(card);
-          Object.Destroy(card.gameObject);
+      
+      async void CompareTopTwoCards(){
+        if (cards.Count < 2){
+          boardManager.OnCardPlayed.Invoke(isDealerDraw);
+          return;
         }
 
-        cards.Clear();
-        boardManager.CheckPiles(this);
-      }
+        Card topCard  = cards.Peek();
+        Card nextCard = cards.ElementAt(1);
 
-      async UniTask PopCard(Card card){
-        var duration = 0.1f;
-        card.transform.DOMoveY(card.transform.position.y + 0.1f, duration).SetEase(Ease.Linear);
-        await UniTask.WaitForSeconds(duration);
+        if (topCard.CardNumber == nextCard.CardNumber){
+          ClearPile();
+          await UniTask.WaitUntil(() => cards.IsNullOrEmpty());
+        }
+      
+        boardManager.OnCardPlayed.Invoke(isDealerDraw);
+
+        async void ClearPile(){
+          var  point        = 0;
+          bool isSnap       = cards.Count == 2;
+          if (isSnap) point += Keys.Point.SNAP;
+
+          point += cards.Sum(o => o.CardPoint);
+
+          boardManager.GainScorePoint(point);
+
+          foreach (Card card in cards){
+            await PopCard(card);
+            Object.Destroy(card.gameObject);
+          }
+
+          cards.Clear();
+          boardManager.CheckPiles(this);
+        }
+
+        async UniTask PopCard(Card card){
+          const float duration = 0.1f;
+          card.transform.DOMoveY(card.transform.position.y + 0.1f, duration).SetEase(Ease.Linear);
+          await UniTask.WaitForSeconds(duration);
+        }
       }
     }
+
+    
 
     public List<Card> GetAllCards(){
-      return new(cards);
-    }
-
-    void CheckCardCount(){
-      if (cards.Count <= 0){
-        cards.Clear();
-        boardManager.CheckPiles(this);
-      }
-    }
-
-    public List<Card> GetCards(){
       return new(cards);
     }
 
@@ -104,7 +96,7 @@ namespace CardGame.Systems{
     }
 
     public Card PeekTopCard(){
-      return cards.Peek();
+      return cards?.Peek();
     }
 
     public void ToggleGreenSphere(bool to){

@@ -49,10 +49,7 @@ namespace CardGame{
 
     void SpawnPlate(GameObject prefab, Transform root){
       Plate = Object.Instantiate(prefab, root).GetComponent<Plate>();
-      Plate.gameObject.Toggle(false);
-      Plate.transform.position = root.position;
-      Plate.transform.rotation = root.rotation;
-      Plate.SetPlayerName(this.ToString());
+      Plate.Init(this, root);
     }
 
     protected abstract void OnNewTurnStart(Entity ctx);
