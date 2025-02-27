@@ -10,10 +10,10 @@ using VContainer;
 namespace CardGame{
 
   public abstract class Entity{
-    [Inject] public CanvasController CanvasController{get; private set;}
-    [Inject] public TurnHandler      TurnHandler     {get; private set;}
-    [Inject] public BoardManager     BoardManager    {get; private set;}
-    [Inject] public DeckManager      DeckManager     {get; private set;}
+    [Inject] public CanvasController CanvasController    {get; private set;}
+    [Inject] public TurnHandler      TurnHandler         {get; private set;}
+    [Inject] public BoardManager     InjectedBoardManager{get; private set;}
+    [Inject] public DeckManager      DeckManager         {get; private set;}
 
     public    HandManager HandManager{get; private set;} // holding cards
     protected Plate       Plate      {get; private set;}
@@ -26,22 +26,22 @@ namespace CardGame{
 
     public virtual void OnToggle(bool to){
       if (to){
-        TurnHandler.OnNewTurnStart  += OnNewTurnStart;
-        TurnHandler.OnGameStart     += EnablePlate;
-        TurnHandler.OnGameEnded     += DisablePlate;
-        BoardManager.OnScoreChanged += Plate.SetScoreText;
+        TurnHandler.OnNewTurnStart          += OnNewTurnStart;
+        TurnHandler.OnGameStart             += EnablePlate;
+        TurnHandler.OnGameEnded             += DisablePlate;
+        InjectedBoardManager.OnScoreChanged += Plate.SetScoreText;
       }
       else{
-        TurnHandler.OnNewTurnStart  -= OnNewTurnStart;
-        TurnHandler.OnGameStart     -= EnablePlate;
-        TurnHandler.OnGameEnded     -= DisablePlate;
-        BoardManager.OnScoreChanged -= Plate.SetScoreText;
+        TurnHandler.OnNewTurnStart          -= OnNewTurnStart;
+        TurnHandler.OnGameStart             -= EnablePlate;
+        TurnHandler.OnGameEnded             -= DisablePlate;
+        InjectedBoardManager.OnScoreChanged -= Plate.SetScoreText;
       }
 
       void EnablePlate(){
         Plate.gameObject.Toggle(true);
       }
-      void DisablePlate(){
+      void DisablePlate(object sender, TurnHandler.ResultEventArgs e){
         Plate.gameObject.Toggle(false);
       }
 
@@ -52,7 +52,9 @@ namespace CardGame{
       Plate.Init(this, root);
     }
 
-    protected abstract void OnNewTurnStart(Entity ctx);
+    protected virtual void OnNewTurnStart(Entity entity){
+      Plate.ToggleYourTurn(entity == this);
+    }
 
   }
 

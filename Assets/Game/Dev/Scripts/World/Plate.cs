@@ -13,12 +13,14 @@ namespace CardGame.World{
 
     [SerializeField] TMP_Text scoreText;
     [SerializeField] TMP_Text playerNameText;
+    [SerializeField] TMP_Text yourTurnText;
 
     MeshRenderer meshRenderer;
     Tween        scaleUpTween;
     Vector3      originalScale;
 
     Entity owner;
+    bool   isPlayer;
     
     const float scaleMultiplier = 1.1f;
     const float duration        = 0.1f;
@@ -29,12 +31,15 @@ namespace CardGame.World{
     }
 
     public void Init(Entity entity, Transform root){
-      SetPlayerName(entity.ToString());
+      SetPlayerName(entity.GetType().Name);
       
       owner = entity;
       transform.position = root.position;
       transform.rotation = root.rotation;
+      ToggleYourTurn(false);
       gameObject.Toggle(false);
+
+      isPlayer = entity.GetType().Name == Keys.LayerMask.PLAYER;
       
       void SetPlayerName(string name){
         playerNameText.SetText(name);
@@ -45,10 +50,14 @@ namespace CardGame.World{
       if(entity != owner) return;
       scoreText.SetText(score.ToString("C0"));
     }
+    
+    public void ToggleYourTurn(bool to){
+      yourTurnText.gameObject.SetActive(to);
+    }
 
   #region Implements
     public bool IsInteractEnable(){
-      return true;
+      return isPlayer;
     }
 
     public void OnRayEnter(){

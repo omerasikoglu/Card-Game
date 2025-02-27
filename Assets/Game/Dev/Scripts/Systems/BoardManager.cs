@@ -5,6 +5,7 @@ using CardGame.Utils;
 using CardGame.World;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using RunTogether.Extensions;
 using UnityEngine;
 using VContainer;
 
@@ -28,7 +29,7 @@ namespace CardGame.Systems{
 
     public CardPile ChosenBoardPile{get; private set;} = null;
 
-    int Score{
+    public int Score{
       get => score;
       set{
         score = value;
@@ -70,6 +71,8 @@ namespace CardGame.Systems{
 
     }
 
+    public CardPile GetOneCardPile() => oneCardPile;
+
     public List<CardPile> GetAvailableCardPiles(){
       var fourPileList = cardPiles.Where(o => o != null).ToList();
       var onePileList  = new List<CardPile>{ oneCardPile };
@@ -81,7 +84,7 @@ namespace CardGame.Systems{
       oneCardPile.AddCard(card, false).Forget();
     }
 
-    public void AddCardToPile(CardPile cardPile, Card card){
+    public void AddCardToPile(CardPile cardPile, Card card, bool isDealerDraw = false){
       cardPile.AddCard(card, false).Forget();
       ClearChosenBoardPile();
     }
@@ -89,19 +92,18 @@ namespace CardGame.Systems{
     public void CheckPiles(CardPile cardPile){
       if (isStartingBoardPilesRemoved) return;
 
-      if (cardPiles.Count > 1){
-        cardPiles.Remove(cardPile);
-      }
-      else{ // Last Pile
-        CardPile remainingCardPile = cardPiles.First(o => o != null);
-        var      remainingCards    = remainingCardPile.GetAllCards();
-        Debug.Log($"remainingCards.Count: <color=green>{remainingCards.Count}</color>");
+      cardPiles.Remove(cardPile);
 
-        foreach (Card card in remainingCards){
-          AddCardToPile(oneCardPile, card);
-        }
-
-        remainingCardPile.ClearAll();
+      if (cardPiles.IsNullOrEmpty()){ // Last Pile
+        // CardPile remainingCardPile = cardPiles.First(o => o != null);
+        // var      remainingCards    = remainingCardPile.GetAllCards();
+        // Debug.Log($"remainingCards.Count: <color=green>{remainingCards.Count}</color>");
+        //
+        // foreach (Card card in remainingCards){
+        //   AddCardToPile(oneCardPile, card, true);
+        // }
+        //
+        // remainingCardPile.ClearAll();
         isStartingBoardPilesRemoved = true;
       }
     }
@@ -142,7 +144,11 @@ namespace CardGame.Systems{
       void UpdateScore(int delta) => Score += delta;
     }
 
-    public IEnumerable<Card> GetBoardTopCards(){
+    public bool IsOneCardPileEmpty(){
+      return oneCardPile.PeekTopCard() == null;
+    }
+
+    public List<Card> GetBoardTopCards(){
       List<Card> topCards;
 
       if (IsFourCardPilesRemoved()){

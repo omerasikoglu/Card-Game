@@ -96,7 +96,7 @@ namespace CardGame.Systems{
     }
 
     public Card PeekTopCard(){
-      return cards?.Peek();
+      return cards.IsNullOrEmpty() ? null : cards?.Peek();
     }
 
     public void ToggleGreenSphere(bool to){

@@ -9,23 +9,47 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class TurnHandler{
-    public event Action OnGameStart = delegate{ };
-    public event Action OnGameEnded = delegate{ };
+    public event Action                        OnGameStart = delegate{ };
+    public event EventHandler<ResultEventArgs> OnGameEnded = delegate{ };
+
+    public class ResultEventArgs : EventArgs{
+      public readonly bool IsWin;
+      public readonly int  Score;
+      public readonly int  BetCount;
+
+      public readonly int  TotalSnapCount;
+      public readonly int  TotalAceCount;
+      public readonly bool MoreCards;
+      public readonly bool MoreClubs;
+
+      public ResultEventArgs(bool isWin, int betCount, int score, int totalSnapCount, int totalAceCount, bool moreCards, bool moreClubs){
+        IsWin          = isWin;
+        BetCount       = betCount;
+        Score          = score;
+        TotalSnapCount = totalSnapCount;
+        TotalAceCount  = totalAceCount;
+        MoreCards      = moreCards;
+        MoreClubs      = moreClubs;
+      }
+    }
+
     // public event Action         OnCardDistributeEnded = delegate{ };
     public event Action<Entity> OnNewTurnStart = delegate{ };
 
     CanvasController canvasController;
     DeckManager      deckManager;
     BoardManager     boardManager;
+    SaveLoadSystem  saveLoadSystem;
 
     List<Entity> entities; // AI included
 
     Entity currentEntity;
 
-    public void Init(CanvasController canvasController, DeckManager deckManager, BoardManager boardManager){
+    public void Init(CanvasController canvasController, DeckManager deckManager, BoardManager boardManager, SaveLoadSystem saveLoadSystem){
       this.canvasController = canvasController;
       this.deckManager      = deckManager;
       this.boardManager     = boardManager;
+      this.saveLoadSystem     = saveLoadSystem;
     }
 
     public void SetPlayers(IEnumerable<Entity> entities){
@@ -34,14 +58,16 @@ namespace CardGame.Systems{
 
     public void OnToggle(bool to){
       if (to){
-        canvasController.OnGameStart += StartGame;
+        canvasController.OnGameStart    += StartGame;
+        canvasController.OnQuitInGame   += QuitGame;
         boardManager.OnCardPilesCreated += DistributeCards;
         boardManager.OnCardPlayed       += CheckAllHandsAreEmpty;
       }
       else{
-        canvasController.OnGameStart -= StartGame;
+        canvasController.OnGameStart    -= StartGame;
+        canvasController.OnQuitInGame   -= QuitGame;
         boardManager.OnCardPilesCreated -= DistributeCards;
-        boardManager.OnCardPlayed    -= CheckAllHandsAreEmpty;
+        boardManager.OnCardPlayed       -= CheckAllHandsAreEmpty;
       }
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
@@ -49,6 +75,8 @@ namespace CardGame.Systems{
       void StartGame(){
         OnGameStart.Invoke();
       }
+
+      void QuitGame(){ }
 
       async void DistributeCards(){
         const float duration = 0.2f;
@@ -69,12 +97,21 @@ namespace CardGame.Systems{
       }
 
       void CheckAllHandsAreEmpty(bool isDealerDraw){
-        if(isDealerDraw) return;
+        if (isDealerDraw) return;
         bool isAllHandsEmpty = entities.All(o => o.HandManager.GetHoldingCardCount() == 0);
         bool isDeckEmpty     = deckManager.IsDeckEmpty();
 
-        if (isAllHandsEmpty && isDeckEmpty){
-          OnGameEnded.Invoke();
+        if (isAllHandsEmpty && isDeckEmpty){ // Game Ended
+          OnGameEnded.Invoke(this,
+            new ResultEventArgs(
+              true,
+              saveLoadSystem.CurrentBet * 2,
+              boardManager.Score,
+              0,
+              0,
+              false,
+              false
+            ));
         }
         else if (isAllHandsEmpty && !isDeckEmpty){
           DistributeCards();
@@ -83,7 +120,7 @@ namespace CardGame.Systems{
           NewTurnStarted();
         }
       }
-      
+
       void NewTurnStarted(){
 
         if (currentEntity == null){ // first turn
@@ -95,7 +132,6 @@ namespace CardGame.Systems{
           currentEntity = entities[index];
         }
 
-        Debug.Log($"currentEntity: <color=green>{currentEntity}</color>");
         OnNewTurnStart.Invoke(currentEntity);
       }
     }

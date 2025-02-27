@@ -36,7 +36,7 @@ namespace CardGame.Systems{
 
       player.Init(platePrefab,playerHandCardHoldRoots, plateRoots[0]);
       opponent.Init(platePrefab,opponentHandCardHoldRoots, plateRoots[1]);
-      turnHandler.Init(canvasController, deckManager, boardManager);
+      turnHandler.Init(canvasController, deckManager, boardManager, saveLoadSystem);
 
       turnHandler.SetPlayers(new Entity[]{ player, opponent });
     }

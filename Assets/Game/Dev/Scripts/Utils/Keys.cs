@@ -52,6 +52,8 @@ namespace CardGame.Utils{
       public const string InGame  = "In Game";
       public const string Info    = "Player Info";
       public const string Warning = "Warning";
+      public const string Win     = "Win";
+      public const string Lost    = "Lost";
     }
 
     public struct Euler{

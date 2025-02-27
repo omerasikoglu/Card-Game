@@ -31,7 +31,7 @@ namespace CardGame{
 
     public PlayerInput(Player player){
       this.player  = player;
-      boardManager = player.BoardManager;
+      boardManager = player.InjectedBoardManager;
       mainCam      = Camera.main;
 
       inputActions = new();
@@ -69,9 +69,12 @@ namespace CardGame{
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
       bool CheckPlateHit(IEnumerable<RaycastHit> results){
-        var newPlateHit = results.Select(
-          hit => hit.collider.GetComponent<Plate>()).FirstOrDefault(o => o != null);
-
+        var newPlateHit = results
+          .Select(hit => hit.collider.GetComponent<Plate>())
+          .FirstOrDefault(plate => plate != null && plate.IsInteractEnable());
+        
+        // if(newPlateHit is null) return false;
+        
         bool wasRayEnterThisFrame   = newPlateHit != null && previousPlateHit == null;
         bool wasRayExitThisFrame    = newPlateHit == null && previousPlateHit != null;
         bool wasPlateTouchPerformed = previousPlateHit != null && newPlateHit != null && FirstTouch.WasPerformedThisFrame();

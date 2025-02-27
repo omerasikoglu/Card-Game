@@ -19,8 +19,8 @@ namespace CardGame.UI{
     [Inject] readonly SaveLoadSystem saveLoadSystem;
     [Inject] readonly TurnHandler    turnHandler;
 
-    public event Action OnGameStart  = delegate{ };
-    public event Action OnQuitInGame = delegate{ };
+    public event Action       OnGameStart         = delegate{ };
+    public event Action       OnQuitInGame        = delegate{ };
     public event Action<bool> OnPlayerInputToggle = delegate{ };
 
   #region Members
@@ -69,30 +69,97 @@ namespace CardGame.UI{
     [TabGroup(Keys.UI.Warning)][SerializeField] Button   returnToGameButton;
     [TabGroup(Keys.UI.Warning)][SerializeField] Button   exitToMainMenuWarningButton;
 
+    [Title(Keys.UI.Win)]
+    [TabGroup(Keys.UI.Win)][SerializeField] Transform winPanel;
+    [TabGroup(Keys.UI.Win)][SerializeField] TMP_Text winBetText;
+    [TabGroup(Keys.UI.Win)][SerializeField] TMP_Text winResultText;
+    [TabGroup(Keys.UI.Win)][SerializeField] TMP_Text winTotalPointText;
+    [TabGroup(Keys.UI.Win)][SerializeField] Button   winContinueButton;
+
+    [Title(Keys.UI.Lost)]
+    [TabGroup(Keys.UI.Lost)][SerializeField] Transform lostPanel;
+    [TabGroup(Keys.UI.Lost)][SerializeField] TMP_Text lostBetText;
+    [TabGroup(Keys.UI.Lost)][SerializeField] TMP_Text lostResultText;
+    [TabGroup(Keys.UI.Lost)][SerializeField] TMP_Text lostTotalPointText;
+    [TabGroup(Keys.UI.Lost)][SerializeField] Button   lostContinueButton;
+
     Transform[] allPanels;
     Toggle[]    allToggles;
     Button[]    allButtons;
-    Button[]    mainMenuButtons,lobbyButtons;
+    Button[]    mainMenuButtons, lobbyButtons;
 
     const float OPEN_DURATION = 0.4f;
   #endregion
 
   #region Core
     void Awake(){
-      allPanels = new[]{ mainMenuPanel, lobbyPanel, createTablePanel, inGamePanel, playerInfoPanel, warningPanel };
+      allPanels = new[]{ mainMenuPanel, lobbyPanel, createTablePanel, inGamePanel, playerInfoPanel, warningPanel, winPanel, lostPanel };
       allButtons = new[]{
         createLobbyButton, exitGameButton, playerInfoButton, exitLobbyPanelButton, createTableButton, exitPlayerInfoButton,
         createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton, exitToMainMenuWarningButton, returnToGameButton,
-        exitTableButton, returnToMainMenuInGameButton
+        exitTableButton, returnToMainMenuInGameButton, winContinueButton, lostContinueButton
       };
-      allToggles   = new[]{ twoPlayerToggle, fourPlayerToggle };
+      allToggles      = new[]{ twoPlayerToggle, fourPlayerToggle };
       mainMenuButtons = new[]{ createLobbyButton, exitGameButton };
-      lobbyButtons = new[]{ exitLobbyPanelButton, createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton };
+      lobbyButtons    = new[]{ exitLobbyPanelButton, createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton };
 
       allButtons.ForEach(o => AddDefaultTriggers(o.transform));
       allToggles.ForEach(o => AddDefaultTriggers(o.transform));
 
       AddOnClickTriggers();
+    }
+
+    void OnEnable()  => OnToggle(true);
+    void OnDisable() => OnToggle(false);
+
+    void OnToggle(bool to){
+      if (to){
+        turnHandler.OnGameEnded += GameEnded;
+      }
+      else{
+        turnHandler.OnGameEnded += GameEnded;
+      }
+
+      void GameEnded(object sender, TurnHandler.ResultEventArgs e){
+        if (e.IsWin){
+          OpenWinPanel(e);
+        }
+        else{
+          OpenLostPanel(e);
+        }
+
+        void OpenWinPanel(TurnHandler.ResultEventArgs e){
+          var moreCardText  = e.MoreCards ? " + 2" : "";
+          var moreClubsText = e.MoreClubs ? " + 3" : "";
+
+          var resultText = $" + {e.TotalSnapCount} x 10\n" +
+                           $" + {e.TotalAceCount} x 1\n" +
+                           $"{moreCardText}\n" +
+                           $"{moreClubsText}";
+
+          inGamePanel.Toggle(false);
+          winBetText.SetText(e.BetCount.ToString("C0"));
+          winResultText.SetText(resultText);
+          winTotalPointText.SetText(e.Score.ToString("C0"));
+          winPanel.Toggle(true);
+        }
+
+        void OpenLostPanel(TurnHandler.ResultEventArgs e){
+          var moreCardText  = e.MoreCards ? " + 2" : "";
+          var moreClubsText = e.MoreClubs ? " + 3" : "";
+
+          var resultText = $" + {e.TotalSnapCount} x 10\n" +
+                           $" + {e.TotalAceCount} x 1\n" +
+                           $"{moreCardText}\n" +
+                           $"{moreClubsText}";
+
+          inGamePanel.Toggle(false);
+          lostBetText.SetText(e.BetCount.ToString("C0"));
+          lostResultText.SetText(resultText);
+          lostTotalPointText.SetText(e.Score.ToString("C0"));
+          lostPanel.Toggle(true);
+        }
+      }
     }
 
     void Start(){
@@ -155,6 +222,9 @@ namespace CardGame.UI{
       // Warning
       returnToGameButton.onClick.AddListener(ReturnToGameWarningButtonPressed);
       exitToMainMenuWarningButton.onClick.AddListener(ExitToMainMenuWarningButtonPressed);
+      // Result Screens
+      winContinueButton.onClick.AddListener(WinContinueButtonPressed);
+      lostContinueButton.onClick.AddListener(LostContinueButtonPressed);
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Main Menu 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
       void CreateLobbyButtonPressed(){
@@ -262,7 +332,7 @@ namespace CardGame.UI{
         CompleteTweens();
         inGamePanel.Toggle(false);
         warningPanel.Toggle(true);
-        warningBetCurrencyText.SetText(saveLoadSystem.CurrentBet.ToString());
+        warningBetCurrencyText.SetText(saveLoadSystem.CurrentBet.ToString("C0"));
       }
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Player Info 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
@@ -288,6 +358,17 @@ namespace CardGame.UI{
         OnQuitInGame.Invoke();
       }
 
+      // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Result Screens 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
+
+      void WinContinueButtonPressed(){
+        winPanel.Toggle(false);
+        mainMenuPanel.Toggle(true);
+      }
+
+      void LostContinueButtonPressed(){
+        lostPanel.Toggle(false);
+        mainMenuPanel.Toggle(true);
+      }
     }
 
     void SwitchPanel(Transform to){

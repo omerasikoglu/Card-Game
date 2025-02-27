@@ -27,7 +27,7 @@ namespace CardGame{
     }
 
     protected override void OnNewTurnStart(Entity ctx){
-      // could be oppenents' turn
+      base.OnNewTurnStart(ctx);
       
       bool isYourTurnStarted = ctx == this;
       PlayerInput.OnToggle(isYourTurnStarted);
