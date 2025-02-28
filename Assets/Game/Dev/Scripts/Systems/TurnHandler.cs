@@ -34,6 +34,7 @@ namespace CardGame.Systems{
 
     public event Action<Entity> OnNewTurnStart = delegate{ };
 
+  #region Members
     CanvasController canvasController;
     DeckManager      deckManager;
     BoardManager     boardManager;
@@ -45,8 +46,10 @@ namespace CardGame.Systems{
     Entity whoIsTurn;
     
     CancellationTokenSource distributeTokenSource = new();
+  #endregion
 
-    public void Init(CanvasController canvasController, DeckManager deckManager, BoardManager boardManager, SaveLoadSystem saveLoadSystem){
+    public void Init(CanvasController canvasController, DeckManager deckManager, 
+      BoardManager boardManager, SaveLoadSystem saveLoadSystem){
       this.canvasController = canvasController;
       this.deckManager      = deckManager;
       this.boardManager     = boardManager;

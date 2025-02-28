@@ -62,6 +62,12 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-54877365-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-181581918-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1842036555-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1850410868-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-62436940-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1800728960-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1138060981-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1587768974-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-339978650-0
         values:
         - colorIndex: 0
           iconNameOrGuid: Favorite
@@ -85,6 +91,18 @@ MonoBehaviour:
           iconNameOrGuid: AudioClip Icon
         - colorIndex: 0
           iconNameOrGuid: Canvas Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
         - colorIndex: 0
           iconNameOrGuid: Settings Icon
         - colorIndex: 0

@@ -39,6 +39,16 @@ namespace CardGame.Systems{
 
     public SaveLoadSystem(){
       LoadGameData();
+      
+      void LoadGameData(){
+        Currency    = GetInt(Keys.IO.CURRENCY, Keys.IO.CURRENCY_DEFAULT);
+        TotalWins   = GetInt(Keys.IO.WIN, 0);
+        TotalLosses = GetInt(Keys.IO.LOST, 0);
+
+        if (Currency <= Keys.IO.CURRENCY_PITY){
+          UpdateCurrency(Keys.IO.CURRENCY_DEFAULT);
+        }
+      }
     }
 
     public void OnToggle(bool to){
@@ -67,16 +77,6 @@ namespace CardGame.Systems{
 
     void Save(string key, int to){
       PlayerPrefs.SetInt(key, to);
-    }
-
-    void LoadGameData(){
-      Currency    = GetInt(Keys.IO.CURRENCY, Keys.IO.CURRENCY_DEFAULT);
-      TotalWins   = GetInt(Keys.IO.WIN, 0);
-      TotalLosses = GetInt(Keys.IO.LOST, 0);
-
-      if (Currency <= Keys.IO.CURRENCY_PITY){
-        UpdateCurrency(Keys.IO.CURRENCY_DEFAULT);
-      }
     }
 
     public int Load(string key){

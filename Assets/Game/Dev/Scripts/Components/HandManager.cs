@@ -6,7 +6,7 @@ using DG.Tweening;
 using RunTogether.Extensions;
 using UnityEngine;
 
-namespace CardGame.Components{
+namespace CardGame{
 
   public class HandManager{
 

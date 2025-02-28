@@ -17,7 +17,8 @@ namespace CardGame.Systems{
     [Inject] readonly SaveLoadSystem saveLoadSystem;
     [Inject] readonly TurnHandler    turnHandler;
 
-    public Action<bool> OnCardPlayed       = delegate{ }; // !: isDealerDraw, krupiye
+  #region Members
+    public Action<bool> OnCardPlayed       = delegate{ }; // !: is Dealer's Draw, krupiye
     public Action       OnCardPilesCreated = delegate{ };
 
     bool isFourCardPilesRemoved;
@@ -31,23 +32,14 @@ namespace CardGame.Systems{
     CancellationTokenSource tokenSource = new();
 
     public CardPile ChosenBoardPile{get; private set;} = null;
+  #endregion
 
+  #region Core
     public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
       this.boardCardRoots   = boardCardRoots;
       this.boardOneCardRoot = boardOneCardRoot;
 
       CreatePiles();
-    }
-
-    void CreatePiles(){
-      oneCardPile = new CardPile(this, boardOneCardRoot);
-      cardPiles   = new();
-
-      for (int i = 0; i < 4; i++){
-        CardPile newCardPile = new CardPile(this, boardCardRoots[i]);
-        newCardPile.ToggleGreenSphere(false);
-        cardPiles.Add(newCardPile);
-      }
     }
 
     public void OnToggle(bool to){
@@ -83,14 +75,17 @@ namespace CardGame.Systems{
       }
     }
 
-    public CardPile GetOneCardPile() => oneCardPile;
+    void CreatePiles(){
+      oneCardPile = new CardPile(this, boardOneCardRoot);
+      cardPiles   = new();
 
-    public List<CardPile> GetAvailableCardPiles(){
-      var fourPileList = cardPiles.Where(o => o != null).ToList();
-      var onePileList  = new List<CardPile>{ oneCardPile };
-
-      return isFourCardPilesRemoved ? onePileList : fourPileList;
+      for (int i = 0; i < 4; i++){
+        CardPile newCardPile = new CardPile(this, boardCardRoots[i]);
+        newCardPile.ToggleGreenSphere(false);
+        cardPiles.Add(newCardPile);
+      }
     }
+  #endregion
 
     public void AddCardToOneCardPile(Card card){
       oneCardPile.AddCard(card, false).Forget();
@@ -120,27 +115,6 @@ namespace CardGame.Systems{
       }
     }
 
-  # region Get
-    public bool IsFourCardPilesRemoved(){
-      return isFourCardPilesRemoved;
-    }
-
-    public bool IsBoardCard(Card card){
-      return card.AttachedCardPile != null;
-    }
-  #endregion
-
-    public void SetChosenBoardPile(CardPile cardPile){
-      ClearChosenBoardPile();
-      ChosenBoardPile = cardPile;
-      cardPile.ToggleGreenSphere(true);
-    }
-
-    public void ClearChosenBoardPile(){
-      ChosenBoardPile = null;
-      cardPiles.ForEach(o => o.ToggleGreenSphere(false));
-    }
-
     public void AnimateJumpTopBoardCards(){
       DOTween.Complete(Keys.Tween.Card);
 
@@ -150,18 +124,22 @@ namespace CardGame.Systems{
       }
     }
 
-    public void UpdateScore(int delta, bool isSnap, int cardCount, int aceCount, int clubsCount){
-      var activeEntity = turnHandler.GetActiveEntity();
-      activeEntity.UpdateScore(delta);
-      activeEntity.UpdateCardCount(cardCount);
-      activeEntity.UpdateAceCount(aceCount);
-      activeEntity.UpdateClubsCount(clubsCount);
-      if (isSnap) activeEntity.UpdateSnapCount(1);
+  # region Get
+    public CardPile GetOneCardPile() => oneCardPile;
 
+    public List<CardPile> GetAvailableCardPiles(){
+      var fourPileList = cardPiles.Where(o => o != null).ToList();
+      var onePileList  = new List<CardPile>{ oneCardPile };
+
+      return isFourCardPilesRemoved ? onePileList : fourPileList;
     }
 
-    public bool IsOneCardPileEmpty(){
-      return oneCardPile.PeekTopCard() == null;
+    public bool IsFourCardPilesRemoved(){
+      return isFourCardPilesRemoved;
+    }
+
+    public bool IsBoardCard(Card card){
+      return card.AttachedCardPile != null;
     }
 
     public List<Card> GetBoardTopCards(){
@@ -176,12 +154,37 @@ namespace CardGame.Systems{
 
       return topCards;
     }
+  #endregion
+
+  #region Set
+    public void SetChosenBoardPile(CardPile cardPile){
+      ClearChosenBoardPile();
+      ChosenBoardPile = cardPile;
+      cardPile.ToggleGreenSphere(true);
+    }
+
+    public void ClearChosenBoardPile(){
+      ChosenBoardPile = null;
+      cardPiles.ForEach(o => o.ToggleGreenSphere(false));
+    }
+
+    public void UpdateScore(int delta, bool isSnap, int cardCount, int aceCount, int clubsCount){
+      var activeEntity = turnHandler.GetActiveEntity();
+      activeEntity.UpdateScore(delta);
+      activeEntity.UpdateCardCount(cardCount);
+      activeEntity.UpdateAceCount(aceCount);
+      activeEntity.UpdateClubsCount(clubsCount);
+      if (isSnap) activeEntity.UpdateSnapCount(1);
+
+    }
 
     public void ResetBoard(){
       cardPiles.ForEach(o => o.Reset());
       oneCardPile.Reset();
       isFourCardPilesRemoved = false;
     }
+  #endregion
+
   }
 
 }

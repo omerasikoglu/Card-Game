@@ -10,7 +10,7 @@ namespace CardGame.Utils{
       public const string LOST     = "total_lose";
 
       public const int CURRENCY_DEFAULT = 50000;
-      public const int CURRENCY_PITY = 1000;
+      public const int CURRENCY_PITY    = 1000;
     }
 
     public struct LayerMask{
@@ -76,6 +76,12 @@ namespace CardGame.Utils{
       const int NOBLES_MAX  = 1000000; // 1M
     }
 
+    public struct AI{
+      public const float WAIT_DURATION = 0.8f; // move Calculation Duration
+    }
+    
+    public const int Resolution = 1080;
+    public const int Fps        = 60;
   }
 
 }

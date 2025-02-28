@@ -88,7 +88,7 @@ namespace CardGame.UI{
     Button[]    allButtons;
     Button[]    mainMenuButtons, lobbyButtons;
 
-    const float OPEN_DURATION = 0.4f;
+    const float SCALE_UP_DURATION = 0.4f;
   #endregion
 
   #region Core
@@ -191,11 +191,11 @@ namespace CardGame.UI{
       eventTrigger.triggers.Add(buttonClicked);
 
       void PointerEnter(BaseEventData args){
-        uiElement.transform.DOScale(1.1f, OPEN_DURATION).SetEase(DelayedOutElastic).SetId(Keys.Tween.UI);
+        uiElement.transform.DOScale(1.1f, SCALE_UP_DURATION).SetEase(DelayedOutElastic).SetId(Keys.Tween.UI);
       }
 
       void PointerExit(BaseEventData args){
-        uiElement.transform.DOScale(1f, OPEN_DURATION).SetEase(Ease.OutQuad).SetId(Keys.Tween.UI);
+        uiElement.transform.DOScale(1f, SCALE_UP_DURATION).SetEase(Ease.OutQuad).SetId(Keys.Tween.UI);
       }
 
       void ButtonClicked(BaseEventData args){

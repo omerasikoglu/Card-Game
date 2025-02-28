@@ -16,8 +16,8 @@ namespace CardGame.World{
     [SerializeField] TMP_Text     playerNameText;
     [SerializeField] TMP_Text     yourTurnText;
 
-    Tween        scaleUpTween;
-    Vector3      originalScale;
+    Tween   scaleUpTween;
+    Vector3 originalScale;
 
     Entity owner;
     bool   isPlayer;
@@ -36,7 +36,7 @@ namespace CardGame.World{
       owner              = entity;
       transform.position = root.position;
       transform.rotation = root.rotation;
-      ToggleYourTurn(false);
+      ToggleYourTurnText(false);
       gameObject.Toggle(false);
 
       isPlayer = entity.GetType().Name == Keys.LayerMask.PLAYER;
@@ -44,21 +44,6 @@ namespace CardGame.World{
       void SetPlayerName(string name){
         playerNameText.SetText(name);
       }
-    }
-
-    public void SetScoreText(int score, Entity entity){
-      if (entity != owner) return;
-      scoreText.SetText(score.ToString());
-    }
-
-    public void SeTotalBetText(int totalBet){
-      if (owner.GetType().Name != Keys.LayerMask.PLAYER) return;
-      var result = $"Total Bet: {totalBet}";
-      totalBetText.SetText(result);
-    }
-
-    public void ToggleYourTurn(bool to){
-      yourTurnText.gameObject.SetActive(to);
     }
 
   #region Implements
@@ -79,6 +64,23 @@ namespace CardGame.World{
     public void OnInteractJustPerformed(){
       DOTween.Kill(Keys.Tween.Plate);
       meshRenderer.transform.localScale = originalScale;
+    }
+  #endregion
+
+  #region Set
+    public void SetScoreText(int score, Entity entity){
+      if (entity != owner) return;
+      scoreText.SetText(score.ToString());
+    }
+
+    public void SeTotalBetText(int totalBet){
+      if (owner.GetType().Name != Keys.LayerMask.PLAYER) return;
+      var result = $"Total Bet: {totalBet}";
+      totalBetText.SetText(result);
+    }
+
+    public void ToggleYourTurnText(bool to){
+      yourTurnText.gameObject.SetActive(to);
     }
   #endregion
 

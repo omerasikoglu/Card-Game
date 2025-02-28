@@ -31,7 +31,7 @@ namespace CardGame{
 
     public PlayerInput(Player player){
       this.player  = player;
-      boardManager = player.InjectedBoardManager;
+      boardManager = player.BoardManager;
       mainCam      = Camera.main;
 
       inputActions = new();

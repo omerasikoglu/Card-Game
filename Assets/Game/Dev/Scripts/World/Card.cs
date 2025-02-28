@@ -3,7 +3,6 @@ using RunTogether.Extensions;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace CardGame.World{
 
@@ -11,22 +10,47 @@ namespace CardGame.World{
   public class Card : MonoBehaviour, IClickInInteract{
 
   #region Members
-    Sprite CardSprite;
-    string CardText; // 1,2.. Q, K
+    [SerializeField] SpriteRenderer frontSpriteRenderer;
+    [SerializeField] TMP_Text       cardNumberText;
 
-    [ShowInInspector] public CardPile AttachedCardPile{get; private set;}
+    Sprite cardSprite;
+    string cardText; // 1,2.. Q, K
 
-    public CardType CardType      {get; private set;}
-    public int      CardNumber    {get; private set;} // 1,2.. 12, 13
-    public int      CardPoint     {get; private set;}
-    public bool     IsInDeck      {get; private set;} = true;
+    [ShowInInspector, ReadOnly] public CardPile AttachedCardPile{get; private set;}
+
+    public CardType CardType  {get; private set;}
+    public int      CardNumber{get; private set;} // 1,2.. 12, 13
+    public int      CardPoint {get; private set;}
+    public bool     IsInDeck  {get; private set;} = true;
   #endregion
 
     void Init(){
-      transform.GetFirstChild<Image>(includeGrandChild: true).sprite = CardSprite;
-      transform.GetFirstChild<TMP_Text>(includeGrandChild: true).SetText(CardText);
+      frontSpriteRenderer.sprite = cardSprite;
+      cardNumberText.SetText(cardText);
       IsInDeck = true;
     }
+
+  #region Implements
+    public bool IsInteractEnable(){
+      return !IsInDeck;
+    }
+
+    public void OnInteractJustPerformed(){
+      // TODO: if there is more than 1 card on the table choose it
+
+    }
+  #endregion
+
+  #region Set
+    public void SetAttachedCardPile(CardPile attachedCardPile){
+      AttachedCardPile = attachedCardPile;
+    }
+
+    public void SetIsInDeck(bool to){
+      IsInDeck = to;
+    }
+  #endregion
+
 
     public class Builder{
       int      cardnumber;
@@ -76,33 +100,13 @@ namespace CardGame.World{
         card.CardNumber = cardnumber;
         card.CardType   = cardType;
         card.CardPoint  = cardPoint;
-        card.CardText   = cardText;
-        card.CardSprite = cardSprite;
+        card.cardText   = cardText;
+        card.cardSprite = cardSprite;
         card.Init();
 
         return card;
       }
     }
-
-  #region Implements
-    public bool IsInteractEnable(){
-      return !IsInDeck;
-    }
-
-    public void OnInteractJustPerformed(){
-      // TODO: if there is more than 1 card on the table choose it
-
-    }
-  #endregion
-
-    public void SetAttachedCardPile(CardPile attachedCardPile){
-      AttachedCardPile = attachedCardPile;
-    }
-
-    public void SetIsInDeck(bool to){
-      IsInDeck = to;
-    }
-
   }
 
 }

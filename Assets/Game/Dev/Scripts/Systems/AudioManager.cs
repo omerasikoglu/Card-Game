@@ -11,15 +11,14 @@ namespace CardGame.Systems{
     WinSfx,
   }
 
-  [Serializable]
-  public class Sound{
+  [Serializable] public class Sound{
     [HideInInspector]
     public AudioSource Source;
     public                  AudioClip AudioClip;
     public                  SoundType SoundType;
     [Range(0f, 1f)]  public float     Volume;
     [Range(.1f, 3f)] public float     Pitch;
-    public bool PlayOnAwake;
+    public                  bool      PlayOnAwake;
   }
 
   public class AudioManager : MonoBehaviour{

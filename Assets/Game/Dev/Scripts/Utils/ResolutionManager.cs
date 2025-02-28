@@ -1,34 +1,14 @@
 using CardGame.Utils;
-using Unity.Cinemachine;
 using UnityEngine;
 
-public class ResolutionManager : MonoBehaviour{
+public class ResolutionManager{
 
-  [SerializeField] CinemachineCamera vCam;
+  public ResolutionManager(){
+    QualitySettings.vSyncCount  = 0;
+    Application.targetFrameRate = Keys.Fps;
 
-  [SerializeField] private float baseFOV = 70f;
-
-  public int Resolution = 1080;
-  public int Fps        = 60;
-
-  void Awake(){
-    QualitySettings.vSyncCount = 0;
-    if (Camera.main.pixelWidth > Resolution){
-      Screen.SetResolution(Resolution, (int)((Camera.main.pixelHeight * Resolution) / Camera.main.pixelWidth), true);
+    if (Camera.main != null && Camera.main.pixelWidth > Keys.Resolution){
+      Screen.SetResolution(Keys.Resolution, (int)((Camera.main.pixelHeight * Keys.Resolution) / Camera.main.pixelWidth), true);
     }
-
-    Application.targetFrameRate = Fps;
-  }
-
-  void Start(){
-    AdjustFOV();
-    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-  }
-
-  void AdjustFOV(){
-    float scaleMultiplier = UtilsClass.GetMobileScaleMultiplier();
-    float newFOV          = baseFOV * scaleMultiplier;
-
-    vCam.Lens.FieldOfView = newFOV;
   }
 }

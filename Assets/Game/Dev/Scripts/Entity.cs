@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using CardGame.Components;
 using CardGame.Systems;
 using CardGame.UI;
 using CardGame.World;
@@ -10,11 +9,12 @@ using VContainer;
 namespace CardGame{
 
   public abstract class Entity{
-    [Inject] public CanvasController CanvasController    {get; private set;}
-    [Inject] public TurnHandler      TurnHandler         {get; private set;}
-    [Inject] public BoardManager     InjectedBoardManager{get; private set;}
-    [Inject] public DeckManager      DeckManager         {get; private set;}
+    [Inject] public CanvasController CanvasController{get; private set;}
+    [Inject] public TurnHandler      TurnHandler     {get; private set;}
+    [Inject] public BoardManager     BoardManager    {get; private set;}
+    [Inject] public DeckManager      DeckManager     {get; private set;}
 
+  #region Members
     Plate plate;
 
     public HandManager HandManager{get; private set;} // holding cards
@@ -24,6 +24,7 @@ namespace CardGame{
     public int AceCount  {get; private set;}
     public int CardCount {get; private set;}
     public int ClubsCount{get; private set;}
+  #endregion
 
     public virtual void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot){
       HandManager = new(this, cardHoldTransforms);
@@ -44,9 +45,9 @@ namespace CardGame{
         CanvasController.OnQuitInGame += GameQuit;
       }
       else{
-        TurnHandler.OnGameStart    -= GameStarted;
-        TurnHandler.OnNewTurnStart -= OnNewTurnStart;
-        TurnHandler.OnGameEnded    -= GameEnded;
+        TurnHandler.OnGameStart       -= GameStarted;
+        TurnHandler.OnNewTurnStart    -= OnNewTurnStart;
+        TurnHandler.OnGameEnded       -= GameEnded;
         CanvasController.OnQuitInGame -= GameQuit;
       }
 
@@ -61,7 +62,7 @@ namespace CardGame{
       void GameEnded(object sender, TurnHandler.ResultEventArgs e){
         plate.gameObject.Toggle(false);
       }
-      
+
       void GameQuit(){
         plate.gameObject.Toggle(false);
       }
@@ -69,14 +70,14 @@ namespace CardGame{
     }
 
     protected virtual void OnNewTurnStart(Entity entity){
-      plate.ToggleYourTurn(entity == this);
+      plate.ToggleYourTurnText(entity == this);
     }
 
   #region Set
     public void TogglePlate(bool to){
       plate.gameObject.Toggle(to);
     }
-    
+
     void SetScore(int to){
       Score = to;
       plate.SetScoreText(Score, this);
