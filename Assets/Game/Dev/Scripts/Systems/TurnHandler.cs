@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CardGame.UI;
 using Cysharp.Threading.Tasks;
-using RunTogether.Extensions;
-using UnityEngine;
-using VContainer;
 
 namespace CardGame.Systems{
 
@@ -45,6 +43,8 @@ namespace CardGame.Systems{
     List<Entity> currentEntities;
 
     Entity whoIsTurn;
+    
+    CancellationTokenSource distributeTokenSource = new();
 
     public void Init(CanvasController canvasController, DeckManager deckManager, BoardManager boardManager, SaveLoadSystem saveLoadSystem){
       this.canvasController = canvasController;
@@ -92,6 +92,8 @@ namespace CardGame.Systems{
       }
 
       void QuitGame(){
+        distributeTokenSource?.Cancel();
+        
         OnGameEnded.Invoke(this,
           new ResultEventArgs(
             false,
@@ -121,17 +123,19 @@ namespace CardGame.Systems{
         NewTurnStarted();
 
         async void DistributeOneCardToEveryone(){
+          distributeTokenSource = new CancellationTokenSource();
+          
           currentEntities[0].HandManager.AddCardToHand();
-          await UniTask.WaitForSeconds(duration);
+          await UniTask.WaitForSeconds(duration, cancellationToken: distributeTokenSource.Token).SuppressCancellationThrow ();
           currentEntities[1].HandManager.AddCardToHand();
-          await UniTask.WaitForSeconds(duration);
+          await UniTask.WaitForSeconds(duration, cancellationToken: distributeTokenSource.Token).SuppressCancellationThrow ();
 
           if (currentEntities.Count > 2){
             currentEntities[2].HandManager.AddCardToHand();
-            await UniTask.WaitForSeconds(duration);
+            await UniTask.WaitForSeconds(duration, cancellationToken: distributeTokenSource.Token).SuppressCancellationThrow() ; 
             currentEntities[3].HandManager.AddCardToHand();
-            await UniTask.WaitForSeconds(duration);
-          }
+            await UniTask.WaitForSeconds(duration, cancellationToken: distributeTokenSource.Token).SuppressCancellationThrow() ;
+          } 
 
         }
       }

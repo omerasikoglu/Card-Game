@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CardGame.Utils;
 using CardGame.World;
 using Cysharp.Threading.Tasks;
@@ -19,23 +20,22 @@ namespace CardGame.Systems{
     public Action<bool> OnCardPlayed       = delegate{ }; // !: isDealerDraw, krupiye
     public Action       OnCardPilesCreated = delegate{ };
 
-    
     bool isFourCardPilesRemoved;
 
-    List<CardPile>       cardPiles;
-    CardPile             oneCardPile;
-    
+    List<CardPile> cardPiles;
+    CardPile       oneCardPile;
+
     readonly Transform[] boardCardRoots;
     readonly Transform   boardOneCardRoot;
 
+    CancellationTokenSource tokenSource = new();
+
     public CardPile ChosenBoardPile{get; private set;} = null;
 
-   
-
     public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
-      this.boardCardRoots = boardCardRoots;
+      this.boardCardRoots   = boardCardRoots;
       this.boardOneCardRoot = boardOneCardRoot;
-      
+
       CreatePiles();
     }
 
@@ -53,11 +53,13 @@ namespace CardGame.Systems{
     public void OnToggle(bool to){
       if (to){
         deckManager.OnDeckCreated += AddOneCardToEachPiles;
+        turnHandler.OnGameEnded   += GameEnded;
       }
       else{
         deckManager.OnDeckCreated -= AddOneCardToEachPiles;
+        turnHandler.OnGameEnded   -= GameEnded;
       }
-      
+
       async void AddOneCardToEachPiles(){
         isFourCardPilesRemoved = false;
 
@@ -67,15 +69,19 @@ namespace CardGame.Systems{
           var topDeckCard = deckManager.DrawCard();
           if (topDeckCard == null) return;
           pile.AddCard(topDeckCard, true).Forget();
-          await UniTask.WaitForSeconds(0.1f);
+          await UniTask.WaitForSeconds(0.1f, cancellationToken: tokenSource.Token).SuppressCancellationThrow();
         }
 
         OnCardPilesCreated.Invoke();
 
       }
-    }
 
-     
+      void GameEnded(object sender, TurnHandler.ResultEventArgs e){
+        tokenSource?.Cancel();
+        tokenSource = new CancellationTokenSource();
+
+      }
+    }
 
     public CardPile GetOneCardPile() => oneCardPile;
 
@@ -150,8 +156,8 @@ namespace CardGame.Systems{
       activeEntity.UpdateCardCount(cardCount);
       activeEntity.UpdateAceCount(aceCount);
       activeEntity.UpdateClubsCount(clubsCount);
-      if(isSnap) activeEntity.UpdateSnapCount(1);
-      
+      if (isSnap) activeEntity.UpdateSnapCount(1);
+
     }
 
     public bool IsOneCardPileEmpty(){

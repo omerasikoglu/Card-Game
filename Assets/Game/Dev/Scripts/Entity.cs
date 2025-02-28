@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using CardGame.Components;
 using CardGame.Systems;
@@ -7,7 +6,6 @@ using CardGame.World;
 using RunTogether.Extensions;
 using UnityEngine;
 using VContainer;
-using Object = UnityEngine.Object;
 
 namespace CardGame{
 

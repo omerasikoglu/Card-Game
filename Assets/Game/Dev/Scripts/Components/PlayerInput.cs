@@ -113,6 +113,7 @@ namespace CardGame{
 
     void Logic(){
       if(targetCardHit.IsInDeck)  return;
+      
       if (boardManager.IsFourCardPilesRemoved()){
         if (targetCardHit.AttachedCardPile != null) return;
         // targetCardHit.OnInteractJustPerformed();

@@ -16,11 +16,10 @@ namespace CardGame.World{
 
     [ShowInInspector] public CardPile AttachedCardPile{get; private set;}
 
-    public CardType CardType  {get; private set;}
-    public int      CardNumber{get; private set;} // 1,2.. 12, 13
-    public int      CardPoint {get; private set;}
-    public bool     IsInDeck  {get; private set;} = true;
-
+    public CardType CardType      {get; private set;}
+    public int      CardNumber    {get; private set;} // 1,2.. 12, 13
+    public int      CardPoint     {get; private set;}
+    public bool     IsInDeck      {get; private set;} = true;
   #endregion
 
     void Init(){

@@ -13,9 +13,6 @@ namespace CardGame{
 
     }
 
-    public void OpenInput()  => PlayerInput.OnToggle(true);
-    public void CloseInput() => PlayerInput.OnToggle(false);
-
     public override void OnToggle(bool to){
       base.OnToggle(to);
       if (to){

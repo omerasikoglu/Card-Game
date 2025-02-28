@@ -60,7 +60,7 @@ namespace CardGame.Systems{
         for (int j = 0; j < maxTypeCount; j++){
           CreateCard(i, (CardType)j);
           await UniTask.WaitForSeconds(oneCardCreationDuration,
-            cancellationToken: deckCreateTokenSource.Token);
+            cancellationToken: deckCreateTokenSource.Token).SuppressCancellationThrow() ;
         }
       }
 

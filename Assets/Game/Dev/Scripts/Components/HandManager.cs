@@ -40,6 +40,7 @@ namespace CardGame.Components{
 
       topDeckCard.transform.SetParent(GetTargetRoot());
       topDeckCard.SetIsInDeck(false);
+      if( entity.GetType().Name != Keys.LayerMask.PLAYER ) topDeckCard.GetComponent<BoxCollider>().enabled = false;
 
       var handCardEuler = GetCardEuler(this.entity);
       var duration      = 0.2f;
@@ -60,7 +61,7 @@ namespace CardGame.Components{
         GetTargetTransforms()[holdingCards.IndexOf(o)].position);
     }
   #endregion
-    
+
     Vector3 GetCardEuler(Entity entity){
       return entity switch{
         Player   => new Vector3(60f, 0f, 0f),
@@ -91,8 +92,8 @@ namespace CardGame.Components{
     }
 
     public List<Card> GetHoldingCards() => holdingCards;
-    
-    public int  GetHoldingCardCount() => holdingCards.Count;
+
+    public int GetHoldingCardCount() => holdingCards.Count;
 
     public void ResetHand(){
       holdingCards.ForEach(o => UnityEngine.Object.Destroy(o.gameObject));
