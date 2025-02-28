@@ -6,9 +6,9 @@ using CardGame.Utils;
 using CardGame.World;
 using Cysharp.Threading.Tasks;
 using RunTogether.Extensions;
-using Sirenix.Utilities.Editor.Expressions;
 using UnityEngine;
 using VContainer;
+using Object = UnityEngine.Object;
 using Random = System.Random;
 
 namespace CardGame.Systems{
@@ -72,7 +72,7 @@ namespace CardGame.Systems{
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
       void ClearDeck(){
-        deck.ForEach(o => UnityEngine.Object.Destroy(o.gameObject));
+        deck.ForEach(o => Object.Destroy(o.gameObject));
         deck.Clear();
         deckCreateTokenSource?.Cancel();
         deckCreateTokenSource = new CancellationTokenSource();
