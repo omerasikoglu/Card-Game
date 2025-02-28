@@ -19,7 +19,7 @@ namespace CardGame.UI{
     [Inject] readonly SaveLoadSystem saveLoadSystem;
     [Inject] readonly TurnHandler    turnHandler;
 
-    public event Action       OnGameStart         = delegate{ };
+    public event Action<bool> OnGameStart         = delegate{ }; // isTwoPlayer
     public event Action       OnQuitInGame        = delegate{ };
     public event Action<bool> OnPlayerInputToggle = delegate{ };
 
@@ -129,8 +129,8 @@ namespace CardGame.UI{
         }
 
         void OpenWinPanel(TurnHandler.ResultEventArgs e){
-          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : " 0";
-          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : " 0";
+          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : "0";
+          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : "0";
           var moreCardText  = e.MoreCards ? " + 2" : " + 0";
           var moreClubsText = e.MoreClubs ? " + 3" : " + 0";
 
@@ -149,8 +149,8 @@ namespace CardGame.UI{
         }
 
         void OpenLostPanel(TurnHandler.ResultEventArgs e){
-          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : " 0";
-          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : " 0";
+          var snapText      = e.TotalSnapCount > 0 ? e.TotalSnapCount + " x 10" : "0";
+          var aceText       = e.TotalAceCount > 0 ? e.TotalAceCount + " x 1 " : "0";
           var moreCardText  = e.MoreCards ? " + 2" : " + 0";
           var moreClubsText = e.MoreClubs ? " + 3" : " + 0";
 
@@ -297,7 +297,7 @@ namespace CardGame.UI{
         createTablePanel.Toggle(true);
         betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
-        
+
         var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
         if (currentCurrency < Keys.Bet.ROOKIES.Max){
           maxBetText.SetText(currentCurrency.ToString());
@@ -305,7 +305,7 @@ namespace CardGame.UI{
         else{
           maxBetText.SetText(Keys.Bet.ROOKIES.Max.ToString(CultureInfo.CurrentCulture));
         }
-        
+
         currentBetText.SetText(Keys.Bet.ROOKIES.Min.ToString(CultureInfo.CurrentCulture));
         betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.ROOKIES.Min} - {Keys.Bet.ROOKIES.Max}");
       }
@@ -316,7 +316,7 @@ namespace CardGame.UI{
         createTablePanel.Toggle(true);
         betScrolbar.value = 0;
         minBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
-        
+
         var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
         if (currentCurrency < Keys.Bet.NOBLES.Max){
           maxBetText.SetText(currentCurrency.ToString());
@@ -324,7 +324,7 @@ namespace CardGame.UI{
         else{
           maxBetText.SetText(Keys.Bet.NOBLES.Max.ToString(CultureInfo.CurrentCulture));
         }
-        
+
         currentBetText.SetText(Keys.Bet.NOBLES.Min.ToString(CultureInfo.CurrentCulture));
         betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.NOBLES.Min} - {Keys.Bet.NOBLES.Max}");
       }
@@ -368,7 +368,7 @@ namespace CardGame.UI{
         inGamePanel.Toggle(true);
 
         saveLoadSystem.UpdateCurrency(-saveLoadSystem.CurrentBet);
-        OnGameStart.Invoke();
+        OnGameStart.Invoke(twoPlayerToggle.isOn);
       }
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 InGame 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹

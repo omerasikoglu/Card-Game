@@ -92,7 +92,12 @@ namespace CardGame.Components{
 
     public List<Card> GetHoldingCards() => holdingCards;
     
-    public int GetHoldingCardCount() => holdingCards.Count;
+    public int  GetHoldingCardCount() => holdingCards.Count;
+
+    public void ResetHand(){
+      holdingCards.ForEach(o => UnityEngine.Object.Destroy(o.gameObject));
+      holdingCards.Clear();
+    }
   }
 
 }

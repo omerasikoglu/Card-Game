@@ -7,7 +7,9 @@ using RunTogether.Extensions;
 using UnityEngine;
 
 namespace CardGame{
-
+  public class Opponent2 : Opponent{ } 
+  public class Opponent3 : Opponent{ }
+  
   public class Opponent : Entity{
 
     const float moveCalculateDuration = 0.8f; 

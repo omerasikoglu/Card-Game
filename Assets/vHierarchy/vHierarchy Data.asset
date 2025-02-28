@@ -48,6 +48,20 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-355715105-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-479026672-0
         - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1423158713-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-146811850-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-115094616-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1446969837-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-617476733-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1870413268-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-2010442990-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-171902974-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1762553413-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1082602004-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1594388963-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1796029102-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-54877365-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-181581918-0
+        - globalObjectIdString: GlobalObjectId_V1-2-ca2adf65dfadb73448c57f5a82fafdb1-1842036555-0
         values:
         - colorIndex: 0
           iconNameOrGuid: Favorite
@@ -71,6 +85,34 @@ MonoBehaviour:
           iconNameOrGuid: AudioClip Icon
         - colorIndex: 0
           iconNameOrGuid: Canvas Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
         - colorIndex: 0
           iconNameOrGuid: Settings Icon
         - colorIndex: 0

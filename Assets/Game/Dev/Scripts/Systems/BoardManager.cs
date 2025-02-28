@@ -20,18 +20,28 @@ namespace CardGame.Systems{
     public Action       OnCardPilesCreated = delegate{ };
 
     
-    bool isStartingBoardPilesRemoved;
+    bool isFourCardPilesRemoved;
 
-    readonly List<CardPile> cardPiles;
-    readonly CardPile       oneCardPile;
+    List<CardPile>       cardPiles;
+    CardPile             oneCardPile;
+    
+    readonly Transform[] boardCardRoots;
+    readonly Transform   boardOneCardRoot;
 
     public CardPile ChosenBoardPile{get; private set;} = null;
 
    
 
     public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
-      cardPiles   = new();
+      this.boardCardRoots = boardCardRoots;
+      this.boardOneCardRoot = boardOneCardRoot;
+      
+      CreatePiles();
+    }
+
+    void CreatePiles(){
       oneCardPile = new CardPile(this, boardOneCardRoot);
+      cardPiles   = new();
 
       for (int i = 0; i < 4; i++){
         CardPile newCardPile = new CardPile(this, boardCardRoots[i]);
@@ -47,21 +57,25 @@ namespace CardGame.Systems{
       else{
         deckManager.OnDeckCreated -= AddOneCardToEachPiles;
       }
-    }
+      
+      async void AddOneCardToEachPiles(){
+        isFourCardPilesRemoved = false;
 
-    public async void AddOneCardToEachPiles(){
-      isStartingBoardPilesRemoved = false;
+        CreatePiles();
 
-      foreach (CardPile pile in cardPiles){
-        var topDeckCard = deckManager.DrawCard();
-        if (topDeckCard == null) return;
-        pile.AddCard(topDeckCard, true).Forget();
-        await UniTask.WaitForSeconds(0.1f);
+        foreach (CardPile pile in cardPiles){
+          var topDeckCard = deckManager.DrawCard();
+          if (topDeckCard == null) return;
+          pile.AddCard(topDeckCard, true).Forget();
+          await UniTask.WaitForSeconds(0.1f);
+        }
+
+        OnCardPilesCreated.Invoke();
+
       }
-
-      OnCardPilesCreated.Invoke();
-
     }
+
+     
 
     public CardPile GetOneCardPile() => oneCardPile;
 
@@ -69,7 +83,7 @@ namespace CardGame.Systems{
       var fourPileList = cardPiles.Where(o => o != null).ToList();
       var onePileList  = new List<CardPile>{ oneCardPile };
 
-      return isStartingBoardPilesRemoved ? onePileList : fourPileList;
+      return isFourCardPilesRemoved ? onePileList : fourPileList;
     }
 
     public void AddCardToOneCardPile(Card card){
@@ -82,7 +96,7 @@ namespace CardGame.Systems{
     }
 
     public void CheckPiles(CardPile cardPile){
-      if (isStartingBoardPilesRemoved) return;
+      if (isFourCardPilesRemoved) return;
 
       cardPiles.Remove(cardPile);
 
@@ -96,13 +110,13 @@ namespace CardGame.Systems{
         // }
         //
         // remainingCardPile.ClearAll();
-        isStartingBoardPilesRemoved = true;
+        isFourCardPilesRemoved = true;
       }
     }
 
   # region Get
     public bool IsFourCardPilesRemoved(){
-      return isStartingBoardPilesRemoved;
+      return isFourCardPilesRemoved;
     }
 
     public bool IsBoardCard(Card card){
@@ -157,6 +171,11 @@ namespace CardGame.Systems{
       return topCards;
     }
 
+    public void ResetBoard(){
+      cardPiles.ForEach(o => o.Reset());
+      oneCardPile.Reset();
+      isFourCardPilesRemoved = false;
+    }
   }
 
 }

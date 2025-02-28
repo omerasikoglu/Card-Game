@@ -28,7 +28,6 @@ namespace CardGame.Systems{
     readonly GameObject   cardPrefab;
     readonly Transform    deckRoot;
     readonly List<Player> player;
-    readonly Vector3      deckEuler;
 
     const float CARD_HEIGHT     = 0.001f;
     const int   DECK_SIZE       = 52;
@@ -43,7 +42,6 @@ namespace CardGame.Systems{
       this.deckRoot   = deckRoot;
 
       deck      = new();
-      deckEuler = Keys.Euler.Deck;
     }
 
     public void OnToggle(bool to){
@@ -82,7 +80,7 @@ namespace CardGame.Systems{
         Card card = new Card.Builder().WithNumber(cardNumber).WithCardType(cardType).Build(cardPrefab);
         card.transform.SetParent(deckRoot);
         card.transform.position      = deckRoot.position + Vector3.zero.With(y: deck.Count * CARD_HEIGHT);
-        card.transform.localRotation = Quaternion.Euler(deckEuler);
+        card.transform.localRotation = Quaternion.Euler( Keys.Euler.Deck);
 
         deck.Push(card);
       }
@@ -120,7 +118,12 @@ namespace CardGame.Systems{
     public bool IsDeckFull(){
       return deck.Count == DECK_SIZE;
     }
-    
+
+    public void ResetDeck(){
+      deckCreateTokenSource?.Cancel();
+      deck.ForEach(o => Object.Destroy(o.gameObject));
+      deck.Clear();
+    }
   }
 
 }

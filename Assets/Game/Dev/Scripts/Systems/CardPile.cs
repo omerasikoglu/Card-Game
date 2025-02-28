@@ -99,6 +99,11 @@ namespace CardGame.Systems{
     public void ClearAll(){
       cards.Clear();
     }
+    
+    public void Reset(){
+      cards.ForEach(o => Object.Destroy(o.gameObject));
+      cards.Clear();
+    }
 
     public Card PeekTopCard(){
       return cards.IsNullOrEmpty() ? null : cards?.Peek();

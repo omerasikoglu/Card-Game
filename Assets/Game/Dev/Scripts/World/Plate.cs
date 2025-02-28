@@ -11,12 +11,13 @@ namespace CardGame.World{
   [SelectionBase]
   public class Plate : MonoBehaviour, IClickInInteract, IRayInteract{
 
-    [SerializeField] TMP_Text scoreText;
-    [SerializeField] TMP_Text totalBetText;
-    [SerializeField] TMP_Text playerNameText;
-    [SerializeField] TMP_Text yourTurnText;
+  #region Members
+    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] TMP_Text     scoreText;
+    [SerializeField] TMP_Text     totalBetText;
+    [SerializeField] TMP_Text     playerNameText;
+    [SerializeField] TMP_Text     yourTurnText;
 
-    MeshRenderer meshRenderer;
     Tween        scaleUpTween;
     Vector3      originalScale;
 
@@ -25,9 +26,9 @@ namespace CardGame.World{
 
     const float scaleMultiplier = 1.1f;
     const float duration        = 0.1f;
+  #endregion
 
     void Awake(){
-      meshRenderer  = transform.GetFirstChild<MeshRenderer>();
       originalScale = meshRenderer.transform.localScale;
     }
 

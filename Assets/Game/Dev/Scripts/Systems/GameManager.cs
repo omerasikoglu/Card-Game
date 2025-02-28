@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CardGame.UI;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
@@ -11,52 +12,46 @@ namespace CardGame.Systems{
 
   #region members
     [Title("Entities")]
-    [SerializeField] GameObject  platePrefab;               
-    [SerializeField] Transform[] playerHandCardHoldRoots;   // main player
-    [SerializeField] Transform[] opponentHandCardHoldRoots; // 2nd player
-    [SerializeField] Transform[] plateRoots;                // player, oppenents
+    [SerializeField] GameObject platePrefab;
+    [SerializeField] Transform[] playerHandCardHoldRoots;
+    [SerializeField] Transform[] opponentHandCardHoldRoots;
+    [SerializeField] Transform[] opponent2HandCardHoldRoots;
+    [SerializeField] Transform[] opponent3HandCardHoldRoots;
+    [SerializeField] Transform[] plateRoots;
 
     SaveLoadSystem   saveLoadSystem;
     DeckManager      deckManager;
     BoardManager     boardManager;
     Player           player;
-    Opponent         opponent;
+    List<Opponent>   opponents;
     TurnHandler      turnHandler;
     CanvasController canvasController;
   #endregion
 
-    [Inject] public void Init(IObjectResolver resolver, Player player, Opponent opponent){
-      saveLoadSystem = resolver.Resolve<SaveLoadSystem>();
-      turnHandler    = resolver.Resolve<TurnHandler>();
-      deckManager    = resolver.Resolve<DeckManager>();
-      boardManager   = resolver.Resolve<BoardManager>();
+    [Inject] public void Init(IObjectResolver resolver, Player player){
+      saveLoadSystem   = resolver.Resolve<SaveLoadSystem>();
+      turnHandler      = resolver.Resolve<TurnHandler>();
+      deckManager      = resolver.Resolve<DeckManager>();
+      boardManager     = resolver.Resolve<BoardManager>();
       canvasController = resolver.Resolve<CanvasController>();
-      this.player    = player;
-      this.opponent  = opponent;
+      this.player      = player;
 
-      player.Init(platePrefab,playerHandCardHoldRoots, plateRoots[0]);
-      opponent.Init(platePrefab,opponentHandCardHoldRoots, plateRoots[1]);
+      var opponent1 = resolver.Resolve<Opponent>();
+      var opponent2 = resolver.Resolve<Opponent2>();
+      var opponent3 = resolver.Resolve<Opponent3>();
+      
+      opponents = new(){ opponent1, opponent2, opponent3 };
+
+
+      player.Init(platePrefab, playerHandCardHoldRoots, plateRoots[0]);
+      opponents[0].Init(platePrefab, opponentHandCardHoldRoots, plateRoots[1]);
+      opponents[1].Init(platePrefab, opponent2HandCardHoldRoots, plateRoots[2]);
+      opponents[2].Init(platePrefab, opponent3HandCardHoldRoots, plateRoots[3]);
+
       turnHandler.Init(canvasController, deckManager, boardManager, saveLoadSystem);
 
-      turnHandler.SetPlayers(new Entity[]{ player, opponent });
+      turnHandler.SetEntities(new Entity[]{ player, opponents[0], opponents[1], opponents[2] });
     }
-
-    [Button] public async UniTaskVoid AddCardToPlayers(){
-      const int   handSize = 4;
-      const float duration = 0.1f;
-
-      for (int i = 0; i < handSize; i++){
-        player.HandManager.AddCardToHand();
-        await UniTask.WaitForSeconds(duration);
-        opponent.HandManager.AddCardToHand();
-        await UniTask.WaitForSeconds(duration);
-      }
-    }
-
-    // [Button] public void FIRST_TIME_START()   => turnHandler.FirstTimeStart();
-    // [Button] public void NEXT_PLAYER_TURN()   => turnHandler.NextPlayerTurn();
-    [Button] public void OPEN_PLAYER_INPUT()  => player.OpenInput();
-    [Button] public void CLOSE_PLAYER_INPUT() => player.CloseInput();
 
   #region Core
     void OnEnable()  => OnToggle(true);
@@ -66,7 +61,7 @@ namespace CardGame.Systems{
       deckManager.OnToggle(to);
       boardManager.OnToggle(to);
       player.OnToggle(to);
-      opponent.OnToggle(to);
+      opponents.ForEach(o => o.OnToggle(to));
       turnHandler.OnToggle(to);
       saveLoadSystem.OnToggle(to);
     }

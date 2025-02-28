@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGame.UI;
 using Cysharp.Threading.Tasks;
+using RunTogether.Extensions;
 using UnityEngine;
 using VContainer;
 
 namespace CardGame.Systems{
 
   public class TurnHandler{
-    public event Action<int>                   OnGameStart = delegate{ };
+    public event Action<int>                   OnGameStart = delegate{ }; // totalBet
     public event EventHandler<ResultEventArgs> OnGameEnded = delegate{ };
 
     public class ResultEventArgs : EventArgs{
@@ -33,7 +34,6 @@ namespace CardGame.Systems{
       }
     }
 
-    // public event Action         OnCardDistributeEnded = delegate{ };
     public event Action<Entity> OnNewTurnStart = delegate{ };
 
     CanvasController canvasController;
@@ -42,8 +42,9 @@ namespace CardGame.Systems{
     SaveLoadSystem   saveLoadSystem;
 
     List<Entity> entities; // AI included
+    List<Entity> currentEntities;
 
-    Entity currentEntity;
+    Entity whoIsTurn;
 
     public void Init(CanvasController canvasController, DeckManager deckManager, BoardManager boardManager, SaveLoadSystem saveLoadSystem){
       this.canvasController = canvasController;
@@ -52,8 +53,9 @@ namespace CardGame.Systems{
       this.saveLoadSystem   = saveLoadSystem;
     }
 
-    public void SetPlayers(IEnumerable<Entity> entities){
-      this.entities = entities.ToList();
+    public void SetEntities(IEnumerable<Entity> entities){
+      this.entities   = entities.ToList();
+      currentEntities = new();
     }
 
     public void OnToggle(bool to){
@@ -72,21 +74,40 @@ namespace CardGame.Systems{
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Local Functions 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
-      void StartGame(){
-        OnGameStart.Invoke(saveLoadSystem.CurrentBet * entities.Count);
+      void StartGame(bool isTwoPlayerMode){
+        if (isTwoPlayerMode){
+          currentEntities = new List<Entity>{ entities[0], entities[1] };
+        }
+        else{
+          currentEntities = new List<Entity>{ entities[0], entities[1], entities[2], entities[3] };
+        }
+        whoIsTurn = null;
+        
+        entities.ForEach( o => o.TogglePlate(false));
+        for (int i = 0; i < currentEntities.Count; i++){
+          currentEntities[i].TogglePlate(true);
+        }
+        
+        OnGameStart.Invoke(saveLoadSystem.CurrentBet * currentEntities.Count);
       }
 
       void QuitGame(){
         OnGameEnded.Invoke(this,
           new ResultEventArgs(
             false,
-            saveLoadSystem.CurrentBet * entities.Count,
-            entities.First().Score,
-            entities.First().SnapCount,
-            entities.First().AceCount,
-            entities.Where(o => o != entities[0]).All(o => entities.First().CardCount > o.CardCount),
-            entities.First().ClubsCount >= 2
+            saveLoadSystem.CurrentBet * currentEntities.Count,
+            currentEntities.First().Score,
+            currentEntities.First().SnapCount,
+            currentEntities.First().AceCount,
+            currentEntities.Where(o => o != currentEntities[0]).All(o => currentEntities.First().CardCount > o.CardCount),
+            currentEntities.First().ClubsCount >= 2
           ));
+
+        deckManager.ResetDeck();
+        boardManager.ResetBoard();
+        currentEntities.ForEach(o => o.HandManager.ResetHand());
+        currentEntities.Clear();
+        whoIsTurn = null;
       }
 
       async void DistributeCards(){
@@ -100,35 +121,44 @@ namespace CardGame.Systems{
         NewTurnStarted();
 
         async void DistributeOneCardToEveryone(){
-          entities[0].HandManager.AddCardToHand();
+          currentEntities[0].HandManager.AddCardToHand();
           await UniTask.WaitForSeconds(duration);
-          entities[1].HandManager.AddCardToHand();
+          currentEntities[1].HandManager.AddCardToHand();
           await UniTask.WaitForSeconds(duration);
+
+          if (currentEntities.Count > 2){
+            currentEntities[2].HandManager.AddCardToHand();
+            await UniTask.WaitForSeconds(duration);
+            currentEntities[3].HandManager.AddCardToHand();
+            await UniTask.WaitForSeconds(duration);
+          }
+
         }
       }
 
       void CheckAllHandsAreEmpty(bool isDealerDraw){
         if (isDealerDraw) return;
-        bool isAllHandsEmpty = entities.All(o => o.HandManager.GetHoldingCardCount() == 0);
+        bool isAllHandsEmpty = currentEntities.All(o => o.HandManager.GetHoldingCardCount() == 0);
         bool isDeckEmpty     = deckManager.IsDeckEmpty();
 
         if (isAllHandsEmpty && isDeckEmpty){ // Game Ended
-          var  player       = entities.First();
-          bool isPlayerWin  = entities.All(o => player.Score >= o.Score);
-          bool haveMoreCard = entities.Where(o => o != entities[0]).All(o => player.CardCount > o.CardCount);
+          var  player       = currentEntities.First();
+          bool isPlayerWin  = currentEntities.All(o => player.Score >= o.Score);
+          bool haveMoreCard = currentEntities.Where(o => o != currentEntities[0]).All(o => player.CardCount > o.CardCount);
 
           OnGameEnded.Invoke(this,
             new ResultEventArgs(
               isPlayerWin,
-              saveLoadSystem.CurrentBet * entities.Count,
+              saveLoadSystem.CurrentBet * currentEntities.Count,
               player.Score,
               player.SnapCount,
               player.AceCount,
               haveMoreCard,
               player.ClubsCount >= 2
             ));
+          boardManager.ResetBoard();
         }
-        else if (isAllHandsEmpty && !isDeckEmpty){
+        else if (isAllHandsEmpty){
           DistributeCards();
         }
         else{
@@ -138,21 +168,21 @@ namespace CardGame.Systems{
 
       void NewTurnStarted(){
 
-        if (currentEntity == null){ // first turn
-          currentEntity = entities[0];
+        if (whoIsTurn == null){ // first turn
+          whoIsTurn = currentEntities[0];
         }
         else{
-          int index = entities.IndexOf(currentEntity);
-          index         = (index + 1) % entities.Count;
-          currentEntity = entities[index];
+          int index = currentEntities.IndexOf(whoIsTurn);
+          index     = (index + 1) % currentEntities.Count;
+          whoIsTurn = currentEntities[index];
         }
 
-        OnNewTurnStart.Invoke(currentEntity);
+        OnNewTurnStart.Invoke(whoIsTurn);
       }
     }
 
     public Entity GetActiveEntity(){
-      return currentEntity; // returns which player's turn
+      return whoIsTurn; // returns which player's turn
     }
   }
 

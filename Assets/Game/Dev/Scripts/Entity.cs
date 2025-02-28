@@ -53,7 +53,6 @@ namespace CardGame{
       }
 
       void GameStarted(int totalBet){
-        plate.gameObject.Toggle(true);
         plate.SeTotalBetText(totalBet);
         SetScore(default);
         SetSnapCount(default);
@@ -76,6 +75,10 @@ namespace CardGame{
     }
 
   #region Set
+    public void TogglePlate(bool to){
+      plate.gameObject.Toggle(to);
+    }
+    
     void SetScore(int to){
       Score = to;
       plate.SetScoreText(Score, this);
