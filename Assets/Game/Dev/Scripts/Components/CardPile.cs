@@ -17,7 +17,7 @@ namespace CardGame.Systems{
     readonly Transform    greenSphere;
 
     const float deckToBoardDuration = 0.2f;
-    const float cardPileCardHeight  = 0.001f;
+    const float cardPileCardHeight  = 0.01f;
 
     public CardPile(BoardManager boardManager, Transform root){
       this.boardManager = boardManager;

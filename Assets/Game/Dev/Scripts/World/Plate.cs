@@ -10,7 +10,7 @@ namespace CardGame.World{
   public class Plate : MonoBehaviour, IClickInInteract, IRayInteract{
 
   #region Members
-    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] TMP_Text     scoreText;
     [SerializeField] TMP_Text     totalBetText;
     [SerializeField] TMP_Text     playerNameText;
@@ -27,7 +27,7 @@ namespace CardGame.World{
   #endregion
 
     void Awake(){
-      originalScale = meshRenderer.transform.localScale;
+      originalScale = spriteRenderer.transform.localScale;
     }
 
     public void Init(Entity entity, Transform root){
@@ -53,17 +53,17 @@ namespace CardGame.World{
 
     public void OnRayEnter(){
       DOTween.Kill(Keys.Tween.Plate);
-      meshRenderer.transform.DOScale(originalScale * scaleMultiplier, duration).SetId(Keys.Tween.Plate);
+      spriteRenderer.transform.DOScale(originalScale * scaleMultiplier, duration).SetId(Keys.Tween.Plate);
     }
 
     public void OnRayExit(){
       DOTween.Complete(Keys.Tween.Plate);
-      meshRenderer.transform.DOScale(originalScale, duration).SetId(Keys.Tween.Plate);
+      spriteRenderer.transform.DOScale(originalScale, duration).SetId(Keys.Tween.Plate);
     }
 
     public void OnInteractJustPerformed(){
       DOTween.Kill(Keys.Tween.Plate);
-      meshRenderer.transform.localScale = originalScale;
+      spriteRenderer.transform.localScale = originalScale;
     }
   #endregion
 

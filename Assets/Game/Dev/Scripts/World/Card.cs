@@ -10,8 +10,12 @@ namespace CardGame.World{
   public class Card : MonoBehaviour, IClickInInteract{
 
   #region Members
+    [SerializeField] Sprite[] cardNumberSprites;
+
+    [SerializeField] SpriteRenderer cardNumberSprite;
+
     [SerializeField] SpriteRenderer frontSpriteRenderer;
-    [SerializeField] TMP_Text       cardNumberText;
+    // [SerializeField] TMP_Text         cardNumberText;
 
     Sprite cardSprite;
     string cardText; // 1,2.. Q, K
@@ -26,8 +30,10 @@ namespace CardGame.World{
 
     void Init(){
       frontSpriteRenderer.sprite = cardSprite;
-      cardNumberText.SetText(cardText);
-      IsInDeck = true;
+      // cardNumberText.SetText(cardText);
+      cardNumberSprite.sprite = cardNumberSprites[CardNumber - 1];
+      IsInDeck                = true;
+
     }
 
   #region Implements
@@ -51,12 +57,12 @@ namespace CardGame.World{
     }
   #endregion
 
-
     public class Builder{
       int      cardnumber;
       CardType cardType;
 
       string cardText;
+      Sprite cardNubmerSprite;
       int    cardPoint;
       Sprite cardSprite;
 

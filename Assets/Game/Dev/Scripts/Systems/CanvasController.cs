@@ -236,9 +236,9 @@ namespace CardGame.UI{
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Main Menu 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
       void CreateLobbyButtonPressed(){
+        mainMenuPanel.Toggle(false);
         CompleteTweens();
         mainMenuButtons.ForEach(o => o.transform.localScale = Vector3.one);
-        mainMenuPanel.Toggle(false);
 
         playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
 

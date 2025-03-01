@@ -1,0 +1,1 @@
+C:\Unity\Haratampa\CardGame\Library\PramData\AndroidApplicationController\Cache\com.UnityTechnologies.com.unity.template.urpblank\gradle-project\unityLibrary\build\intermediates\cxx\Debug\2e3g414w\obj\arm64-v8a

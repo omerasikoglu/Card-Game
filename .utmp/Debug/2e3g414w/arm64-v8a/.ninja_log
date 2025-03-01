@@ -1,0 +1,10 @@
+# ninja log v5
+32	1360	7627845272497501	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	8902ec99242a43cf
+56	1373	7627845272877500	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	60a0ee75816d34a1
+46	1435	7627845273702612	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	e6e1db79d6e45665
+0	2106	7627845279538050	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	575a5b7a8327ba85
+20	2188	7627845281344163	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	fc620828a7618372
+41	2510	7627845283979684	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	dfd1745941f2900e
+51	2626	7627845284899683	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	697b07639eb49882
+25	2684	7627845286025132	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	3ea6ba2a7304902c
+2684	3082	7627845289679373	C:/Unity/Haratampa/CardGame/Library/PramData/AndroidApplicationController/Cache/com.UnityTechnologies.com.unity.template.urpblank/gradle-project/unityLibrary/build/intermediates/cxx/Debug/2e3g414w/obj/arm64-v8a/libgame.so	cf56db8ebbe76a0c
