@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using CardGame.Systems;
+using CardGame.UI;
 using UnityEngine;
+using VContainer;
 
 namespace CardGame{
 
@@ -7,8 +10,9 @@ namespace CardGame{
     public PlayerInput PlayerInput{get; private set;}
 
   #region Core
-    public override void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot){
-      base.Init(platePrefab, cardHoldTransforms, plateRoot);
+    public override void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot,
+      CanvasController canvasController, TurnHandler turnHandler, BoardManager boardManager, DeckManager deckManager){
+      base.Init(platePrefab, cardHoldTransforms, plateRoot, canvasController, turnHandler, boardManager, deckManager);
       PlayerInput = new(this);
 
     }

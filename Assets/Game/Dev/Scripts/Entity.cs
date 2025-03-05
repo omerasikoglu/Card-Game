@@ -4,15 +4,14 @@ using CardGame.UI;
 using CardGame.World;
 using RunTogether.Extensions;
 using UnityEngine;
-using VContainer;
 
 namespace CardGame{
 
   public abstract class Entity{
-    [Inject] public CanvasController CanvasController{get; private set;}
-    [Inject] public TurnHandler      TurnHandler     {get; private set;}
-    [Inject] public BoardManager     BoardManager    {get; private set;}
-    [Inject] public DeckManager      DeckManager     {get; private set;}
+    public CanvasController CanvasController{get; private set;}
+    public TurnHandler      TurnHandler     {get; private set;}
+    public BoardManager     BoardManager    {get; private set;}
+    public DeckManager      DeckManager     {get; private set;}
 
   #region Members
     Plate plate;
@@ -26,8 +25,14 @@ namespace CardGame{
     public int ClubsCount{get; private set;}
   #endregion
 
-    public virtual void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot){
+    public virtual void Init(GameObject platePrefab, IReadOnlyList<Transform> cardHoldTransforms, Transform plateRoot,
+      CanvasController canvasController, TurnHandler turnHandler, BoardManager boardManager, DeckManager deckManager){
       HandManager = new(this, cardHoldTransforms);
+
+      CanvasController = canvasController;
+      TurnHandler      = turnHandler;
+      BoardManager     = boardManager;
+      DeckManager      = deckManager;
 
       SpawnPlate(platePrefab, plateRoot);
 

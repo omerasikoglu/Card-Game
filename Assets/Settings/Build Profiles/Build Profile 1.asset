@@ -293,7 +293,7 @@ MonoBehaviour:
     - line: '|   useCustomProguardFile: 0'
     - line: '|   AndroidTargetArchitectures: 2'
     - line: '|   AndroidSplashScreenScale: 0'
-    - line: '|   androidSplashScreen: {fileID: 2800000, guid: eb6b6effa152209469ac8e907a7a2748,
+    - line: '|   androidSplashScreen: {fileID: 2800000, guid: a2b380b8dd151e14dbb2872e7fb8d794,
         type: 3}'
     - line: '|   AndroidKeystoreName: '
     - line: '|   AndroidKeyaliasName: '
@@ -567,7 +567,7 @@ MonoBehaviour:
     - line: '|     m_APIs: 10000000'
     - line: '|     m_Automatic: 1'
     - line: '|   - m_BuildTarget: AndroidPlayer'
-    - line: '|     m_APIs: 150000000b000000'
+    - line: '|     m_APIs: 15000000'
     - line: '|     m_Automatic: 0'
     - line: '|   m_BuildTargetVRSettings: []'
     - line: '|   m_DefaultShaderChunkSizeInMB: 16'
@@ -577,7 +577,7 @@ MonoBehaviour:
     - line: '|   openGLRequireES32: 0'
     - line: '|   m_TemplateCustomTags: {}'
     - line: '|   mobileMTRendering:'
-    - line: '|     Android: 1'
+    - line: '|     Android: 0'
     - line: '|     iPhone: 1'
     - line: '|     tvOS: 1'
     - line: '|   m_BuildTargetGroupLightmapEncodingQuality:'
@@ -1011,7 +1011,7 @@ MonoBehaviour:
     - rid: 247489720163238248
       type: {class: AndroidPlatformBuildSettings, ns: UnityEditor.Android, asm: UnityEditor.Android.Extensions}
       data:
-        m_Development: 0
+        m_Development: 1
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0
@@ -1028,7 +1028,7 @@ MonoBehaviour:
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
         m_CurrentDeploymentTargetId: __builtin__target_default
-        m_BuildType: 2
+        m_BuildType: 1
         m_BuildAppBundle: 0
         m_IPAddressToConnect: 
         m_SymlinkSources: 0

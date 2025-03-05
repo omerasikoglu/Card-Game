@@ -5,7 +5,7 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class SaveLoadSystem{
-    [Inject] readonly TurnHandler turnHandler;
+    readonly TurnHandler turnHandler;
 
   #region Members
     int currency, totalWins, totalLosses;
@@ -37,9 +37,11 @@ namespace CardGame.Systems{
     public int CurrentBet{get; private set;} // !: 1 player's bet
   #endregion
 
-    public SaveLoadSystem(){
+    public SaveLoadSystem(TurnHandler turnHandler){
+      this.turnHandler = turnHandler;
+
       LoadGameData();
-      
+
       void LoadGameData(){
         Currency    = GetInt(Keys.IO.CURRENCY, Keys.IO.CURRENCY_DEFAULT);
         TotalWins   = GetInt(Keys.IO.WIN, 0);

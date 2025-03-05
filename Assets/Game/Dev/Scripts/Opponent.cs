@@ -9,9 +9,6 @@ using UnityEngine;
 
 namespace CardGame{
 
-  public class Opponent2 : Opponent{ }
-  public class Opponent3 : Opponent{ }
-
   public class Opponent : Entity{
     
     protected override void OnNewTurnStart(Entity ctx){

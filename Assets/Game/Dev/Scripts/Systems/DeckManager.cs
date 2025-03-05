@@ -14,7 +14,7 @@ using Random = System.Random;
 namespace CardGame.Systems{
 
   public class DeckManager{
-    [Inject] readonly TurnHandler turnHandler;
+    TurnHandler turnHandler;
 
     public event Action OnDeckCreated = delegate{ };
 
@@ -26,7 +26,6 @@ namespace CardGame.Systems{
 
     readonly GameObject   cardPrefab;
     readonly Transform    deckRoot;
-    readonly List<Player> player;
 
     const float CARD_HEIGHT     = 0.001f;
     const int   DECK_SIZE       = 52;
@@ -36,7 +35,8 @@ namespace CardGame.Systems{
     const    float oneCardCreationDuration = 0.01f;
   #endregion
 
-    public DeckManager(GameObject cardPrefab, Transform deckRoot){
+    public DeckManager(GameObject cardPrefab, Transform deckRoot, TurnHandler turnHandler){
+      this.turnHandler = turnHandler;
       this.cardPrefab = cardPrefab;
       this.deckRoot   = deckRoot;
 

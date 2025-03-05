@@ -13,9 +13,9 @@ using VContainer;
 namespace CardGame.Systems{
 
   public class BoardManager{
-    [Inject] readonly DeckManager    deckManager;
-    [Inject] readonly SaveLoadSystem saveLoadSystem;
-    [Inject] readonly TurnHandler    turnHandler;
+    readonly DeckManager  deckManager;
+    readonly TurnHandler  turnHandler;
+    readonly AudioManager audioManager;
 
   #region Members
     public Action<bool> OnCardPlayed       = delegate{ }; // !: is Dealer's Draw, krupiye
@@ -35,9 +35,13 @@ namespace CardGame.Systems{
   #endregion
 
   #region Core
-    public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot){
+    public BoardManager(Transform[] boardCardRoots, Transform boardOneCardRoot, DeckManager deckManager, TurnHandler turnHandler, AudioManager audioManager){
+
+      this.deckManager      = deckManager;
+      this.turnHandler      = turnHandler;
       this.boardCardRoots   = boardCardRoots;
       this.boardOneCardRoot = boardOneCardRoot;
+      this.audioManager     = audioManager;
 
       CreatePiles();
     }
@@ -93,6 +97,7 @@ namespace CardGame.Systems{
 
     public void AddCardToPile(CardPile cardPile, Card card, bool isDealerDraw = false){
       cardPile.AddCard(card, false).Forget();
+      audioManager.PlaySound(SoundType.ButtonClickSfx);
       ClearChosenBoardPile();
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using CardGame.Systems;
 using CardGame.Utils;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using RunTogether.Extensions;
 using Sirenix.OdinInspector;
@@ -9,15 +10,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using VContainer;
 
 namespace CardGame.UI{
 
   public class CanvasController : MonoBehaviour{
 
-    [Inject] readonly AudioManager   audioManager;
-    [Inject] readonly SaveLoadSystem saveLoadSystem;
-    [Inject] readonly TurnHandler    turnHandler;
+    AudioManager   audioManager;
+    SaveLoadSystem saveLoadSystem;
+    TurnHandler    turnHandler;
 
     public event Action<bool> OnGameStart         = delegate{ }; // isTwoPlayer
     public event Action       OnQuitInGame        = delegate{ };
@@ -102,17 +102,30 @@ namespace CardGame.UI{
       allToggles      = new[]{ twoPlayerToggle, fourPlayerToggle };
       mainMenuButtons = new[]{ createLobbyButton, exitGameButton };
       lobbyButtons    = new[]{ exitLobbyPanelButton, createNewbieLobbyButton, createRookieLobbyButton, createNobleLobbyButton };
+    }
+    
+    public void Init(AudioManager audioManager, SaveLoadSystem saveLoadSystem, TurnHandler turnHandler){
+      this.audioManager  = audioManager;
+      this.saveLoadSystem = saveLoadSystem;
+      this.turnHandler    = turnHandler;
+    }
 
+    void Start(){
       allButtons.ForEach(o => AddDefaultTriggers(o.transform));
       allToggles.ForEach(o => AddDefaultTriggers(o.transform));
 
       AddOnClickTriggers();
+
+      SwitchPanel(mainMenuPanel);
     }
 
-    void OnEnable()  => OnToggle(true);
+    void OnEnable() => OnToggle(true);
+
     void OnDisable() => OnToggle(false);
 
-    void OnToggle(bool to){
+    async void OnToggle(bool to){
+      await UniTask.WaitUntil(() => turnHandler != null && saveLoadSystem != null);
+
       if (to){
         turnHandler.OnGameEnded += GameEnded;
       }
@@ -169,10 +182,6 @@ namespace CardGame.UI{
         }
       }
     }
-
-    void Start(){
-      SwitchPanel(mainMenuPanel);
-    }
   #endregion
 
     void AddDefaultTriggers(Transform uiElement){
@@ -209,12 +218,12 @@ namespace CardGame.UI{
 
     void AddOnClickTriggers(){
       // Main Menu
-      createLobbyButton.onClick.AddListener(CreateLobbyButtonPressed);
+      // createLobbyButton.onClick.AddListener(CreateLobbyButtonPressed);
       exitGameButton.onClick.AddListener(ExitGameButtonPressed);
       // Lobby
       playerInfoButton.onClick.AddListener(PlayerInfoButtonPressed);
       exitLobbyPanelButton.onClick.AddListener(ExitLobbyPanelButtonPressed);
-      createNewbieLobbyButton.onClick.AddListener(CreateNewbieLobbyButtonPressed);
+      // createNewbieLobbyButton.onClick.AddListener(CreateNewbieLobbyButtonPressed);
       createRookieLobbyButton.onClick.AddListener(CreateRookieLobbyButtonPressed);
       createNobleLobbyButton.onClick.AddListener(CreateNobleLobbyButtonPressed);
       // Table
@@ -222,7 +231,7 @@ namespace CardGame.UI{
       betScrolbar.onValueChanged.AddListener(BetScrolbarValueChanged);
       twoPlayerToggle.onValueChanged.AddListener(TwoPlayerTogglePressed);
       fourPlayerToggle.onValueChanged.AddListener(FourPlayerTogglePressed);
-      createTableButton.onClick.AddListener(CreateGameTableButtonPressed);
+      // createTableButton.onClick.AddListener(CreateGameTableButtonPressed);
       // InGame
       returnToMainMenuInGameButton.onClick.AddListener(ReturnToMainMenuInGameButtonPressed);
       // Player Info
@@ -235,19 +244,6 @@ namespace CardGame.UI{
       lostContinueButton.onClick.AddListener(LostContinueButtonPressed);
 
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 Main Menu 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
-      void CreateLobbyButtonPressed(){
-        mainMenuPanel.Toggle(false);
-        CompleteTweens();
-        mainMenuButtons.ForEach(o => o.transform.localScale = Vector3.one);
-
-        playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
-
-        createNewbieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NEWBIES.Min;
-        createRookieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.ROOKIES.Min;
-        createNobleLobbyButton.interactable  = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NOBLES.Min;
-
-        lobbyPanel.Toggle(true);
-      }
 
       void ExitGameButtonPressed(){
         Application.Quit();
@@ -269,26 +265,6 @@ namespace CardGame.UI{
         CompleteTweens();
         lobbyPanel.Toggle(false);
         mainMenuPanel.Toggle(true);
-      }
-
-      void CreateNewbieLobbyButtonPressed(){
-        CompleteTweens();
-        lobbyPanel.Toggle(false);
-        createTablePanel.Toggle(true);
-        betScrolbar.value = 0;
-        minBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
-
-        var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
-        if (currentCurrency < Keys.Bet.NEWBIES.Max){
-          maxBetText.SetText(currentCurrency.ToString());
-        }
-        else{
-          maxBetText.SetText(Keys.Bet.NEWBIES.Max.ToString(CultureInfo.CurrentCulture));
-        }
-
-        currentBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
-        betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.NEWBIES.Min} - {Keys.Bet.NEWBIES.Max}");
-
       }
 
       void CreateRookieLobbyButtonPressed(){
@@ -361,16 +337,6 @@ namespace CardGame.UI{
         twoPlayerToggle.isOn = !to;
       }
 
-      void CreateGameTableButtonPressed(){
-        CompleteTweens();
-        saveLoadSystem.SetCurrentBet(currentBetText.text.ConvertToInt());
-        createTablePanel.Toggle(false);
-        inGamePanel.Toggle(true);
-
-        saveLoadSystem.UpdateCurrency(-saveLoadSystem.CurrentBet);
-        OnGameStart.Invoke(twoPlayerToggle.isOn);
-      }
-
       // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹 InGame 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
       void ReturnToMainMenuInGameButtonPressed(){
         CompleteTweens();
@@ -414,6 +380,51 @@ namespace CardGame.UI{
         mainMenuPanel.Toggle(true);
       }
     }
+
+    public void CreateLobbyButtonPressed(){
+      mainMenuPanel.Toggle(false);
+      CompleteTweens();
+      mainMenuButtons.ForEach(o => o.transform.localScale = Vector3.one);
+
+      playerLobbyCurrencyText.SetText(saveLoadSystem.Load(Keys.IO.CURRENCY).ToString("C0"));
+
+      createNewbieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NEWBIES.Min;
+      createRookieLobbyButton.interactable = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.ROOKIES.Min;
+      createNobleLobbyButton.interactable  = saveLoadSystem.Load(Keys.IO.CURRENCY) >= Keys.Bet.NOBLES.Min;
+
+      lobbyPanel.Toggle(true);
+    }
+
+    public void CreateNewbieLobbyButtonPressed(){
+      CompleteTweens();
+      lobbyPanel.Toggle(false);
+      createTablePanel.Toggle(true);
+      betScrolbar.value = 0;
+      minBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
+
+      var currentCurrency = saveLoadSystem.Load(Keys.IO.CURRENCY);
+      if (currentCurrency < Keys.Bet.NEWBIES.Max){
+        maxBetText.SetText(currentCurrency.ToString());
+      }
+      else{
+        maxBetText.SetText(Keys.Bet.NEWBIES.Max.ToString(CultureInfo.CurrentCulture));
+      }
+
+      currentBetText.SetText(Keys.Bet.NEWBIES.Min.ToString(CultureInfo.CurrentCulture));
+      betRangeText.SetText($"<color=#52A6FF>Bet Range</color>\n{Keys.Bet.NEWBIES.Min} - {Keys.Bet.NEWBIES.Max}");
+
+    }
+
+    public void CreateGameTableButtonPressed(){
+      CompleteTweens();
+      saveLoadSystem.SetCurrentBet(currentBetText.text.ConvertToInt());
+      createTablePanel.Toggle(false);
+      inGamePanel.Toggle(true);
+
+      saveLoadSystem.UpdateCurrency(-saveLoadSystem.CurrentBet);
+      OnGameStart.Invoke(twoPlayerToggle.isOn);
+    }
+    // 🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹🔹
 
     void SwitchPanel(Transform to){
       allPanels.ForEach(o => o.Toggle(to == o));
